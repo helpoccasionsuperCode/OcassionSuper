@@ -1,0 +1,28 @@
+// import React from "react";
+
+// const Quote = ({ text }) => {
+//   return (
+//     <div className="p-10 flex justify-center items-center h-fit">
+//       <h1 className="text-center text-3xl [text-shadow:0_0_12px_rgba(249,115,22,0.8)] font-semibold text-global leading-relaxed">
+//         {text}
+//       </h1>
+//     </div>
+//   );
+// };
+
+// export default Quote;
+
+
+import React from "react";
+
+const Quote = ({ text }) => {
+  return (
+    <div className="p-10 flex justify-center items-center h-fit">
+      <h1 className="text-center text-3xl [text-shadow:0_0_12px_rgba(249,115,22,0.8)] font-semibold text-global leading-relaxed">
+        {text}
+      </h1>
+    </div>
+  );
+};
+
+export default Quote;
