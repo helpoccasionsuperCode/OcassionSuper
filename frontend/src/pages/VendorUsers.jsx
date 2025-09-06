@@ -21,7 +21,7 @@
 //       try {
 //         setLoading(true);
 //         setError("");
-//         const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://ocassionsupernew-1.onrender.com"}/api/admin/vendors`, {
+//         const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"}/api/admin/vendors`, {
 //           credentials: "include",
 //         });
 //         if (!res.ok) {
@@ -71,7 +71,7 @@
 
 //     try {
 //       setCreating(true);
-//       const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://ocassionsupernew-1.onrender.com"}/api/admin/users/create-vendor`, {
+//       const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"}/api/admin/users/create-vendor`, {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
@@ -371,7 +371,7 @@ function VendorUsers() {
         setError("");
         const res = await fetch(
           `${
-            import.meta.env.VITE_BACKEND_URL || "https://ocassionsupernew-1.onrender.com"
+            import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"
           }/api/admin/vendors`,
           {
             credentials: "include",
@@ -426,7 +426,7 @@ function VendorUsers() {
       setCreating(true);
       const res = await fetch(
         `${
-          import.meta.env.VITE_BACKEND_URL || "https://ocassionsupernew-1.onrender.com"
+          import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"
         }/api/admin/users/create-vendor`,
         {
           method: "POST",

@@ -25,8 +25,8 @@ console.log('You can find these values in your EmailJS dashboard at https://www.
 const questions = [
   {
     key: 'VITE_BACKEND_URL',
-    question: 'Enter your Backend URL (default: https://ocassionsupernew-1.onrender.com): ',
-    default: 'https://ocassionsupernew-1.onrender.com'
+    question: 'Enter your Backend URL (default: https://ocassionsuper.onrender.com): ',
+    default: 'https://ocassionsuper.onrender.com'
   },
   {
     key: 'VITE_EMAILJS_SERVICE_ID',

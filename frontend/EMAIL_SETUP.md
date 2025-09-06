@@ -142,7 +142,7 @@ Create a `.env.local` file in the frontend directory with:
 
 ```env
 # API Configuration
-VITE_BACKEND_URL=https://ocassionsupernew-1.onrender.com
+VITE_BACKEND_URL=https://ocassionsuper.onrender.com
 
 # EmailJS Configuration
 VITE_EMAILJS_SERVICE_ID=your_service_id_here

@@ -43,7 +43,7 @@ const VendorStep1 = ({ formData, handleChange, handleCategorySelect, setFormData
 
         const controller = new AbortController();
         const timeout = setTimeout(() => {
-            fetch(`${import.meta.env.VITE_BACKEND_URL || "https://ocassionsupernew-1.onrender.com"}/api/cities?q=${encodeURIComponent(inputValue)}`, {
+            fetch(`${import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"}/api/cities?q=${encodeURIComponent(inputValue)}`, {
                 signal: controller.signal,
             })
                 .then((res) => res.json())
