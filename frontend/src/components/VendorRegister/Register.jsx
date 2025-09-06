@@ -248,7 +248,7 @@ const Register = () => {
             </div>
 
             {/* Debug Button - Remove this after testing */}
-            <div className="mb-4 p-2 bg-gray-100 rounded">
+            {/* <div className="mb-4 p-2 bg-gray-100 rounded">
                 <button
                     onClick={() => {
                         console.log("=== FORM STATE DEBUG ===");
@@ -260,7 +260,7 @@ const Register = () => {
                 >
                     Debug Form State
                 </button>
-            </div>
+            </div> */}
 
             {step === 1 && (
                 <VendorStep1
