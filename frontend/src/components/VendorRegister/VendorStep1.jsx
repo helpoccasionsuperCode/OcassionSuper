@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 
 const VendorStep1 = ({ formData, handleChange, handleCategorySelect, setFormData }) => {
     const [cityOptions, setCityOptions] = useState([]);
-    const [inputValue, setInputValue] = useState("");
+    const [inputValue, setInputValue] = useState(formData.city || "");
     const [showOthersInput, setShowOthersInput] = useState(false);
     // const [otherInput, setOtherInput] = useState("");
 
@@ -29,6 +29,11 @@ const VendorStep1 = ({ formData, handleChange, handleCategorySelect, setFormData
         { id: 6, name: "Event Planning", icon: CalendarDays },
         { id: 7, name: "Others", icon: MoreHorizontal },
     ];
+
+    // Sync inputValue with formData.city
+    useEffect(() => {
+        setInputValue(formData.city || "");
+    }, [formData.city]);
 
     useEffect(() => {
         if (inputValue.length < 2) {
@@ -167,11 +172,15 @@ const VendorStep1 = ({ formData, handleChange, handleCategorySelect, setFormData
                         freeSolo
                         options={cityOptions}
                         inputValue={inputValue}
-                        onInputChange={(e, newInputValue) => setInputValue(newInputValue)}
+                        onInputChange={(e, newInputValue) => {
+                            setInputValue(newInputValue);
+                            setFormData({ ...formData, city: newInputValue || "" });
+                        }}
                         value={formData.city}
-                        onChange={(e, newValue) =>
-                            setFormData({ ...formData, city: newValue || "" })
-                        }
+                        onChange={(e, newValue) => {
+                            setFormData({ ...formData, city: newValue || "" });
+                            setInputValue(newValue || "");
+                        }}
                         renderInput={(params) => (
                             <div ref={params.InputProps.ref}>
                                 <input

@@ -21,6 +21,7 @@ const Register = () => {
         socialMedia: "",
         categories: [],
         othersCategories: [],
+        otherInput: "",
         images: [],
         videos: [],
         packages: [],
@@ -39,52 +40,52 @@ const Register = () => {
 
 
     const isStepValid = (currentStep) => {
-        // if (currentStep === 1) {
-        //     const hasOthers = formData.categories.includes("Others");
-        //     return (
-        //         formData.businessName &&
-        //         formData.ownerName &&
-        //         formData.email &&
-        //         //  formData.email.endsWith('@gmail.com') &&
-        //         formData.phone &&
-        //         // /^(\d){10}$/.test(String(formData.phone)) &&
-        //         formData.city &&
-        //         formData.serviceArea &&
-        //         formData.socialMedia &&
-        //         formData.categories.length > 0
-        //             (!hasOthers || (hasOthers && formData.othersCategory))
-        //     );
-        // }
-        // if (currentStep === 2) {
-        //     return true;
-        // }
-        // if (currentStep === 3) {
-        //     return true;
-        // }
-        // if (currentStep === 4) {
-        //     return true;
-        // }
-        // return false;
-
-
         if (currentStep === 1) {
             // define hasOthers here
             const hasOthers = formData.categories.includes("Others");
 
-            return (
-                formData.businessName &&
-                formData.ownerName &&
-                formData.email &&
-                formData.phone &&
-                formData.city &&
-                formData.serviceArea &&
-                formData.categories.length > 0 &&
-                (
-                    !hasOthers ||
-                    // ✅ allow either typed input OR already-entered array
-                    (hasOthers && (formData.othersCategories.length > 0 || formData.otherInput?.trim()?.length > 0))
-                )
+            // Debug logging
+            console.log("=== VALIDATION DEBUG ===");
+            console.log("businessName:", formData.businessName, "✓", !!formData.businessName);
+            console.log("ownerName:", formData.ownerName, "✓", !!formData.ownerName);
+            console.log("email:", formData.email, "✓", !!formData.email);
+            console.log("phone:", formData.phone, "✓", !!formData.phone);
+            console.log("city:", formData.city, "✓", !!formData.city);
+            console.log("serviceArea:", formData.serviceArea, "✓", !!formData.serviceArea);
+            console.log("categories:", formData.categories);
+            console.log("categories.length:", formData.categories.length, "✓", formData.categories.length > 0);
+            console.log("hasOthers:", hasOthers);
+            console.log("othersCategories:", formData.othersCategories);
+            console.log("otherInput:", formData.otherInput);
+
+            // Basic validation
+            const basicFieldsValid = (
+                formData.businessName?.trim() &&
+                formData.ownerName?.trim() &&
+                formData.email?.trim() &&
+                formData.phone?.trim() &&
+                formData.city?.trim() &&
+                formData.serviceArea?.trim() &&
+                formData.categories.length > 0
             );
+
+            // Others category validation
+            let othersValid = true;
+            if (hasOthers) {
+                othersValid = (
+                    (formData.othersCategories && formData.othersCategories.length > 0) ||
+                    (formData.otherInput && formData.otherInput.trim().length > 0)
+                );
+            }
+
+            const isValid = basicFieldsValid && othersValid;
+
+            console.log("basicFieldsValid:", basicFieldsValid);
+            console.log("othersValid:", othersValid);
+            console.log("isValid:", isValid);
+            console.log("========================");
+
+            return isValid;
         }
         if (currentStep === 2) return true;
         if (currentStep === 3) return true;
@@ -244,6 +245,21 @@ const Register = () => {
                     className="bg-[#E69B83] h-2 rounded-full transition-all"
                     style={{ width: `${(step / 4) * 100}%` }}
                 ></div>
+            </div>
+
+            {/* Debug Button - Remove this after testing */}
+            <div className="mb-4 p-2 bg-gray-100 rounded">
+                <button
+                    onClick={() => {
+                        console.log("=== FORM STATE DEBUG ===");
+                        console.log("formData:", formData);
+                        console.log("isStepValid(1):", isStepValid(1));
+                        console.log("========================");
+                    }}
+                    className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
+                >
+                    Debug Form State
+                </button>
             </div>
 
             {step === 1 && (
