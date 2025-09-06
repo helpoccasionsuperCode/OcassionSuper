@@ -215,7 +215,7 @@ const VendorStep1 = ({ formData, handleChange, handleCategorySelect, setFormData
                 {/* Social Media Link */}
                 <div className="flex flex-col md:col-span-2">
                     <label htmlFor="socialMedia" className="text-xl mb-1 font-medium text-gray-700">
-                        Social Media Link <span className="text-gray-400">(Optional)</span>
+                        Social Media Link <span className="text-blue-600">(Optional)</span>
                     </label>
                     <input
                         type="url"
