@@ -122,7 +122,7 @@ function Admin() {
   };
 
   const fetchVendorUsers = async (signal) => {
-    const base = import.meta.env.VITE_API_URL || "http://localhost:3000";
+    const base = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
     const usersRes = await fetch(`${base}/api/admin/users/vendors`, { credentials: "include", signal });
     if (!usersRes.ok) {
       const body = await usersRes.json().catch(() => ({}));
@@ -140,7 +140,7 @@ function Admin() {
       try {
         setLoading(true);
         setError("");
-        const base = import.meta.env.VITE_API_URL || "http://localhost:3000";
+        const base = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
         const vendorsRes = await fetch(`${base}/api/admin/vendors`, { credentials: "include", signal: controller.signal });
         if (!vendorsRes.ok) {
           const body = await vendorsRes.json().catch(() => ({}));
@@ -165,7 +165,7 @@ function Admin() {
   const updateStatus = async (vendorId, status) => {
     try {
       setSavingId(vendorId);
-      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api/admin/vendors/${vendorId}/status`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"}/api/admin/vendors/${vendorId}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status })
@@ -192,7 +192,7 @@ function Admin() {
   const loadVendorMedia = async (vendorId) => {
     try {
       setMediaLoadingId(vendorId);
-      const base = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const base = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
       const res = await fetch(`${base}/api/admin/vendors/${vendorId}`, { credentials: "include" });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));

@@ -38,7 +38,7 @@ const VendorStep1 = ({ formData, handleChange, handleCategorySelect, setFormData
 
         const controller = new AbortController();
         const timeout = setTimeout(() => {
-            fetch(`http://localhost:3000/api/cities?q=${encodeURIComponent(inputValue)}`, {
+            fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"}/api/cities?q=${encodeURIComponent(inputValue)}`, {
                 signal: controller.signal,
             })
                 .then((res) => res.json())

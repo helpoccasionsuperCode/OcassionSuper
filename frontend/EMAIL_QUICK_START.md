@@ -35,7 +35,7 @@ node setup-env.js
 
 Or manually create `.env.local`:
 ```env
-VITE_API_URL=http://localhost:3000
+VITE_BACKEND_URL=http://localhost:3000
 VITE_EMAILJS_SERVICE_ID=your_service_id_here
 VITE_EMAILJS_TEMPLATE_ID=your_template_id_here
 VITE_EMAILJS_PUBLIC_KEY=your_public_key_here

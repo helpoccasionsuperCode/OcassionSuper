@@ -90,7 +90,7 @@ const FileUpload = ({ label, description, onFileSelect, required = false }) => {
         const fd = new FormData();
         fd.append("file", file);
 
-        const res = await fetch("http://localhost:3000/api/upload", {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"}/api/upload`, {
           method: "POST",
           body: fd,
         });

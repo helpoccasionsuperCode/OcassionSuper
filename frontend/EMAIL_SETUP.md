@@ -142,7 +142,7 @@ Create a `.env.local` file in the frontend directory with:
 
 ```env
 # API Configuration
-VITE_API_URL=http://localhost:3000
+VITE_BACKEND_URL=http://localhost:3000
 
 # EmailJS Configuration
 VITE_EMAILJS_SERVICE_ID=your_service_id_here

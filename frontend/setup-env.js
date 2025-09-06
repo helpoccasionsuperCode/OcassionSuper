@@ -24,8 +24,8 @@ console.log('You can find these values in your EmailJS dashboard at https://www.
 
 const questions = [
   {
-    key: 'VITE_API_URL',
-    question: 'Enter your API URL (default: http://localhost:3000): ',
+    key: 'VITE_BACKEND_URL',
+    question: 'Enter your Backend URL (default: http://localhost:3000): ',
     default: 'http://localhost:3000'
   },
   {

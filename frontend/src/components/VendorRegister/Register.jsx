@@ -174,7 +174,7 @@ const Register = () => {
             console.log("Payload sent to backend:", payload);
 
             // const response = await axios.post(
-            //     "http://localhost:3000/api/register/vendor/register",
+            //     `${import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"}/api/register/vendor/register`,
             //     payload,
             //     { headers: { "Content-Type": "application/json" } }
             // );
@@ -207,7 +207,7 @@ const Register = () => {
             });
 
             const response = await axios.post(
-                "http://localhost:3000/api/register/vendor/register",
+                `${import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"}/api/register/vendor/register`,
                 formDataObj,
                 { headers: { "Content-Type": "multipart/form-data" } }
             );
