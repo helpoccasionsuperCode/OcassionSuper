@@ -18,7 +18,7 @@ function VendorUsersList() {
         if (search) params.set("search", search);
         if (active !== "") params.set("active", active);
         const qs = params.toString();
-        const base = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+        const base = import.meta.env.VITE_BACKEND_URL || "https://ocassionsupernew-1.onrender.com";
         const url = `${base}/api/admin/users/vendors${qs ? `?${qs}` : ""}`;
         const res = await fetch(url, {
           credentials: "include",
