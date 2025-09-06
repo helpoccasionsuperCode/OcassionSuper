@@ -53,8 +53,8 @@ const VendorRegister = new mongoose.Schema({
     
     socialMedia: {
         type: String,
-        required: [true, 'Social media link is required'],
-        default: undefined,
+        required: false,
+        default: null,
         trim: true
     },
     

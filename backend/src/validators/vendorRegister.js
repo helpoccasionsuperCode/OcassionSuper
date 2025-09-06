@@ -124,7 +124,7 @@ if (typeof data.othersCategories === 'string') {
     }),
     city: Joi.string().min(2).max(50).required(),
     serviceArea: Joi.string().required(),
-    socialMedia: Joi.string().min(1).required(),
+    socialMedia: Joi.string().min(1).optional().allow("", null),
     categories: Joi.array().items(Joi.string()).min(1).required(),
     othersCategories: Joi.array().items(Joi.string().min(1)).optional(),
     images: Joi.array().items(Joi.string().uri()).optional().allow(null),

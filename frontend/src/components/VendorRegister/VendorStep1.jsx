@@ -206,7 +206,7 @@ const VendorStep1 = ({ formData, handleChange, handleCategorySelect, setFormData
                 {/* Social Media Link */}
                 <div className="flex flex-col md:col-span-2">
                     <label htmlFor="socialMedia" className="text-xl mb-1 font-medium text-gray-700">
-                        Social Media Link <span className="text-red-500">*</span>
+                        Social Media Link <span className="text-gray-400">(Optional)</span>
                     </label>
                     <input
                         type="url"
@@ -216,7 +216,6 @@ const VendorStep1 = ({ formData, handleChange, handleCategorySelect, setFormData
                         onChange={handleChange}
                         placeholder="https://instagram.com/yourbusiness"
                         className="outline-1 hover:outline-2 hover:outline-[#E69B83] rounded-lg px-4 py-2 w-full"
-                        required
                     />
                 </div>
 
@@ -317,13 +316,13 @@ const VendorStep1 = ({ formData, handleChange, handleCategorySelect, setFormData
                                         if (e.key === 'Enter' && (formData.otherInput || "").trim()) {
                                             e.preventDefault();
                                             setFormData(prev => {
-                                                const updatedOthers = [...(prev.othersCategories || []), otherInput.trim()];
+                                                const updatedOthers = [...(prev.othersCategories || []), (formData.otherInput || "").trim()];
                                                 return {
                                                     ...prev,
                                                     othersCategories: updatedOthers,   // update categories
+                                                    otherInput: "", // clear input after adding
                                                 };
                                             });
-                                            setOtherInput("");
                                         }
                                     }}
 

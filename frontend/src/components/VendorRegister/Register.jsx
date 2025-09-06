@@ -78,7 +78,6 @@ const Register = () => {
                 formData.phone &&
                 formData.city &&
                 formData.serviceArea &&
-                formData.socialMedia &&
                 formData.categories.length > 0 &&
                 (
                     !hasOthers ||
@@ -130,7 +129,6 @@ const Register = () => {
             !formData.ownerName ||
             !formData.city ||
             !formData.serviceArea ||
-            !formData.socialMedia ||
             !formData.categories.length
         ) {
             toast.error("Please fill in all required fields");
