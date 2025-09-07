@@ -827,7 +827,8 @@ import Register from "../components/VendorRegister/Register"
 import Login from "../components/Login"
 import Footer from "../components/Footer"
 // const adminPhone = ;
-const adminPhone = import.meta.env.VITE_PHONE;
+// const adminPhone = import.meta.env.VITE_PHONE;
+const adminPhone = "9870823328";
 import Logo from "../../public/occasion Logo.png"
 
 const VendorReg = () => {
