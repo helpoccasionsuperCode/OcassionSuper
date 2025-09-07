@@ -422,8 +422,8 @@ const VendorReg = () => {
 
 
 
-      <div className="fixed right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-50 flex flex-col items-end gap-2 sm:gap-3 lg:gap-4">
-        {/* Phone Button */}
+      {/* <div className="fixed right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-50 flex flex-col items-end gap-2 sm:gap-3 lg:gap-4">
+        
         <Link
           to={`tel:+${adminPhone}`}
           className="flex items-center bg-[#4A3F3B] hover:bg-[#6b5a53] text-white p-2 sm:p-3 rounded-lg shadow-md transition-all duration-300 hover:scale-105"
@@ -432,7 +432,7 @@ const VendorReg = () => {
           <FaPhone className="w-4 h-4 sm:w-5 sm:h-5" />
           <span className="hidden lg:inline ml-2 text-xs sm:text-sm">Call</span>
         </Link>
-        {/* WhatsApp Button */}
+        
         <Link
           to={`https://wa.me/${adminPhone}?text=`}
           target="_blank"
@@ -442,6 +442,36 @@ const VendorReg = () => {
         >
           <FaWhatsapp className="w-4 h-4 sm:w-5 sm:h-5" />
           <span className="hidden lg:inline ml-2 text-xs sm:text-sm">WhatsApp</span>
+        </Link>
+      </div> */}
+
+
+
+      <div className="fixed right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-50 flex flex-col items-end gap-2 sm:gap-3 lg:gap-4">
+        {/* Phone Button */}
+        <Link
+          to={`tel:+${adminPhone}`}
+          className="group flex items-center bg-[#4A3F3B] hover:bg-[#6b5a53] text-white p-2 sm:p-3 rounded-lg shadow-md transition-all duration-300 hover:scale-105 overflow-hidden"
+          title="Call Admin"
+        >
+          <span className="opacity-0 group-hover:opacity-100 transform translate-x-full group-hover:translate-x-0 transition-all duration-300 text-xs sm:text-sm mr-2 whitespace-nowrap">
+            +{adminPhone}
+          </span>
+          <FaPhone className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+        </Link>
+        
+        {/* WhatsApp Button */}
+        <Link
+          to={`https://wa.me/${adminPhone}?text=`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex items-center bg-green-500 hover:bg-green-600 text-white p-2 sm:p-3 rounded-lg shadow-md transition-all duration-300 hover:scale-105 overflow-hidden"
+          title="WhatsApp Admin"
+        >
+          <span className="opacity-0 group-hover:opacity-100 transform translate-x-full group-hover:translate-x-0 transition-all duration-300 text-xs sm:text-sm mr-2 whitespace-nowrap">
+            +{adminPhone}
+          </span>
+          <FaWhatsapp className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
         </Link>
       </div>
 
