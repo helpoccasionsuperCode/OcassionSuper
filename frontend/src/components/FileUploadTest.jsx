@@ -3,146 +3,104 @@ import FileUpload from './VendorRegister/FileUpload';
 import { toast } from 'react-toastify';
 
 const FileUploadTest = () => {
-  const [uploadedFiles, setUploadedFiles] = useState({
-    images: [],
-    videos: [],
-    documents: []
-  });
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [uploadedUrls, setUploadedUrls] = useState([]);
 
-  const handleImageUpload = (urls) => {
-    setUploadedFiles(prev => ({ ...prev, images: urls || [] }));
-  };
-
-  const handleVideoUpload = (urls) => {
-    setUploadedFiles(prev => ({ ...prev, videos: urls || [] }));
-  };
-
-  const handleDocumentUpload = (urls) => {
-    setUploadedFiles(prev => ({ ...prev, documents: urls || [] }));
-  };
-
-  const handleSubmit = () => {
-    const payload = {
-      images: uploadedFiles.images,
-      videos: uploadedFiles.videos,
-      documents: uploadedFiles.documents,
-      timestamp: new Date().toISOString()
-    };
-
-    console.log('Uploaded files payload:', payload);
-    toast.info('Check console for uploaded files data!');
+  const handleFileSelect = (urls, files) => {
+    if (urls) {
+      setUploadedUrls(urls);
+      setUploadedFiles(files);
+      toast.success(`Successfully uploaded ${urls.length} file(s)`);
+    } else {
+      setUploadedUrls([]);
+      setUploadedFiles([]);
+    }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          File Upload Test Page
-        </h1>
-        
-        <p className="text-center text-gray-600 mb-8">
-          This page demonstrates the Cloudinary file upload functionality. 
-          Upload files and see how the URLs are captured and stored.
-        </p>
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+        File Upload with Threading Test
+      </h1>
+      
+      <div className="mb-8 p-4 bg-blue-50 rounded-lg">
+        <h2 className="text-lg font-semibold mb-2 text-blue-800">Features Demonstrated:</h2>
+        <ul className="text-blue-700 space-y-1">
+          <li>• <strong>Web Workers:</strong> File processing and uploads happen in separate threads</li>
+          <li>• <strong>Image Compression:</strong> Images are automatically compressed before upload</li>
+          <li>• <strong>Progress Tracking:</strong> Real-time upload progress for each file</li>
+          <li>• <strong>Mobile Responsive:</strong> File names are truncated on mobile screens</li>
+          <li>• <strong>Error Handling:</strong> Individual file upload failures don't affect others</li>
+        </ul>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Image Upload */}
-          <div>
-            <FileUpload
-              label="Test Image Upload"
-              description="Upload multiple images to test the functionality"
-              onFileSelect={handleImageUpload}
-              required={false}
-            />
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <FileUpload
+          label="Test Image Upload"
+          description="Upload images to test compression and threading (max 5, 100MB each)"
+          onFileSelect={handleFileSelect}
+          required={false}
+        />
 
-          {/* Video Upload */}
-          <div>
-            <FileUpload
-              label="Test Video Upload"
-              description="Upload multiple videos to test the functionality"
-              onFileSelect={handleVideoUpload}
-              required={false}
-            />
-          </div>
+        <FileUpload
+          label="Test Video Upload"
+          description="Upload videos to test threading (max 2, 50MB each)"
+          onFileSelect={handleFileSelect}
+          required={false}
+        />
+      </div>
 
-          {/* Document Upload */}
-          <div className="lg:col-span-2">
-            <FileUpload
-              label="Test Document Upload"
-              description="Upload documents (PDF, DOC, images) to test the functionality"
-              onFileSelect={handleDocumentUpload}
-              required={false}
-            />
-          </div>
-        </div>
-
-        {/* Results Display */}
-        <div className="mt-8 p-4 bg-gray-100 rounded-lg">
-          <h3 className="text-xl font-semibold mb-4">Uploaded Files Summary</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white p-4 rounded-lg">
-              <h4 className="font-medium text-gray-700 mb-2">Images ({uploadedFiles.images.length})</h4>
-              {uploadedFiles.images.length > 0 ? (
-                <ul className="text-sm text-green-600 space-y-1">
-                  {uploadedFiles.images.map((url, idx) => (
-                    <li key={idx} className="break-all">✅ {url}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-500 text-sm">No images uploaded</p>
-              )}
-            </div>
-
-            <div className="bg-white p-4 rounded-lg">
-              <h4 className="font-medium text-gray-700 mb-2">Videos ({uploadedFiles.videos.length})</h4>
-              {uploadedFiles.videos.length > 0 ? (
-                <ul className="text-sm text-green-600 space-y-1">
-                  {uploadedFiles.videos.map((url, idx) => (
-                    <li key={idx} className="break-all">✅ {url}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-500 text-sm">No videos uploaded</p>
-              )}
-            </div>
-
-            <div className="bg-white p-4 rounded-lg">
-              <h4 className="font-medium text-gray-700 mb-2">Documents ({uploadedFiles.documents.length})</h4>
-              {uploadedFiles.documents.length > 0 ? (
-                <ul className="text-sm text-green-600 space-y-1">
-                  {uploadedFiles.documents.map((url, idx) => (
-                    <li key={idx} className="break-all">✅ {url}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-500 text-sm">No documents uploaded</p>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-6 text-center">
-            <button
-              onClick={handleSubmit}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Test Submit (Check Console)
-            </button>
+      {uploadedUrls.length > 0 && (
+        <div className="mt-8 p-4 bg-green-50 rounded-lg">
+          <h3 className="text-lg font-semibold mb-3 text-green-800">
+            Uploaded Files ({uploadedUrls.length})
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {uploadedUrls.map((url, index) => {
+              const file = uploadedFiles[index];
+              const isImage = file?.type?.startsWith('image/');
+              const isVideo = file?.type?.startsWith('video/');
+              
+              return (
+                <div key={index} className="bg-white p-3 rounded-lg border border-green-200">
+                  <div className="text-sm text-gray-600 mb-2">
+                    {file?.name || `File ${index + 1}`}
+                  </div>
+                  {isImage && (
+                    <img 
+                      src={url} 
+                      alt={`Uploaded ${index + 1}`}
+                      className="w-full h-32 object-cover rounded"
+                    />
+                  )}
+                  {isVideo && (
+                    <video 
+                      src={url} 
+                      controls
+                      className="w-full h-32 object-cover rounded"
+                    />
+                  )}
+                  {!isImage && !isVideo && (
+                    <div className="w-full h-32 bg-gray-100 rounded flex items-center justify-center">
+                      <span className="text-gray-500">📄 Document</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
+      )}
 
-        {/* Instructions */}
-        <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-          <h3 className="text-lg font-semibold text-blue-800 mb-3">How to Test</h3>
-          <ol className="text-blue-700 space-y-2 list-decimal list-inside">
-            <li>Upload some files using the upload components above</li>
-            <li>Watch as files are uploaded to Cloudinary and URLs are generated</li>
-            <li>See the URLs displayed in the summary section</li>
-            <li>Click "Test Submit" to see the data structure in the console</li>
-            <li>This simulates what would be sent to your backend</li>
-          </ol>
-        </div>
+      <div className="mt-8 p-4 bg-yellow-50 rounded-lg">
+        <h3 className="text-lg font-semibold mb-2 text-yellow-800">Technical Details:</h3>
+        <ul className="text-yellow-700 text-sm space-y-1">
+          <li>• Web Workers run in separate threads to prevent UI blocking</li>
+          <li>• Images are compressed using OffscreenCanvas API</li>
+          <li>• Upload progress is tracked individually for each file</li>
+          <li>• File names are dynamically truncated based on screen size</li>
+          <li>• Fallback to regular upload if Web Workers are not supported</li>
+        </ul>
       </div>
     </div>
   );

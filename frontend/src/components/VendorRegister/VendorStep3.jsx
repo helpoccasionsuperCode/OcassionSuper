@@ -26,14 +26,7 @@ const VendorStep3 = ({ formData, setFormData }) => {
       {/* GST Upload */}
       <FileUpload
         label="GST Certificate"
-        description="Required for tax compliance"
-        // onFileSelect={(urls) => setFormData((prev) => ({
-        //   ...prev,
-        //   documents: { ...prev.documents, gst: urls },
-        // }))}
-        // required={false}
-        // initialFiles={stepFiles}      // <-- persist files
-        // initialUrls={stepUrls}
+        description="Upload GST certificate for tax compliance (PDF, JPG, PNG - max 10MB)"
         onFileSelect={(urls, files) => {
           setGstFiles(files);
           setGstUrls(urls);
@@ -49,14 +42,7 @@ const VendorStep3 = ({ formData, setFormData }) => {
 
       <FileUpload
         label="Business Registration"
-        description="Shop license or business registration"
-        // onFileSelect={(urls) => setFormData((prev) => ({
-        //   ...prev,
-        //   documents: { ...prev.documents, businessProof: urls },
-        // }))}
-        // required={false}
-        // initialFiles={stepFiles}      // <-- persist files
-        // initialUrls={stepUrls}
+        description="Shop license or business registration document (PDF, JPG, PNG - max 10MB)"
         onFileSelect={(urls, files) => {
           setBusinessFiles(files);
           setBusinessUrls(urls);
@@ -73,14 +59,7 @@ const VendorStep3 = ({ formData, setFormData }) => {
       {/* ID Proof Upload */}
       <FileUpload
         label="ID Proof"
-        description="Aadhaar, PAN, or Passport"
-        // onFileSelect={(urls) => setFormData((prev) => ({
-        //   ...prev,
-        //   documents: { ...prev.documents, idProof: urls },
-        // }))}
-        // required={false}
-        // initialFiles={stepFiles}      // <-- persist files
-        // initialUrls={stepUrls}
+        description="Aadhaar, PAN, or Passport (PDF, JPG, PNG - max 10MB)"
         onFileSelect={(urls, files) => {
           setIdFiles(files);
           setIdUrls(urls);

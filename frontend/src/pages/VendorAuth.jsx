@@ -450,7 +450,7 @@ const VendorReg = () => {
       <div className="fixed right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-50 flex flex-col items-end gap-2 sm:gap-3 lg:gap-4">
         {/* Phone Button */}
         <Link
-          to={`tel:+${adminPhone}`}
+          to={`tel:+91${adminPhone}`}
           className="group flex items-center bg-[#4A3F3B] hover:bg-[#6b5a53] text-white rounded-lg shadow-md transition-all duration-300 overflow-hidden w-12 h-12 hover:w-auto hover:px-3 justify-center hover:justify-start"
           title="Call Admin"
         >

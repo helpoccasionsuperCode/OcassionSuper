@@ -29,7 +29,7 @@ const PORT = process.env.PORT || 3000;
 const allowedOrigins = [
     'http://localhost:5173',
     'https://occasionsuper.in',
-    'https://ocassionsuper-new.vercel.app',
+    'https://ocassion-super.vercel.app',
     process.env.CLIENT_URL
 ].filter(Boolean);
 

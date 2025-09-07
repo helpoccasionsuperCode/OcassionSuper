@@ -194,7 +194,7 @@
 // export default FileUpload;
 
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 
 const FileUpload = ({
@@ -206,10 +206,61 @@ const FileUpload = ({
   required = false,
 }) => {
   const fileInputRef = useRef(null);
+  const workerRef = useRef(null);
   const [files, setFiles] = useState(initialFiles);
   const [uploadedUrls, setUploadedUrls] = useState(initialUrls);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({});
   const [error, setError] = useState("");
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  // Initialize Web Worker and window resize listener
+  useEffect(() => {
+    if (typeof Worker !== 'undefined') {
+      workerRef.current = new Worker(new URL('../../workers/fileUploadWorker.js', import.meta.url));
+      
+      workerRef.current.onmessage = (e) => {
+        const { type, data } = e.data;
+        
+        switch (type) {
+          case 'UPLOAD_SUCCESS':
+            handleUploadSuccess(data);
+            break;
+          case 'UPLOAD_ERROR':
+            handleUploadError(data);
+            break;
+          case 'IMAGE_PROCESSED':
+            handleImageProcessed(data);
+            break;
+          case 'PROCESSING_ERROR':
+            handleProcessingError(data);
+            break;
+        }
+      };
+    }
+    
+    // Add window resize listener for responsive file name truncation
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      if (workerRef.current) {
+        workerRef.current.terminate();
+      }
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Utility function to truncate file names for mobile
+  const truncateFileName = useCallback((fileName, maxLength = 20) => {
+    if (fileName.length <= maxLength) return fileName;
+    
+    const extension = fileName.split('.').pop();
+    const nameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.'));
+    const truncatedName = nameWithoutExt.substring(0, maxLength - extension.length - 4);
+    
+    return `${truncatedName}...${extension}`;
+  }, []);
 
   const handleFileChange = async (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -250,13 +301,132 @@ const FileUpload = ({
     setError("");
 
     if (onFileSelect) {
-      await uploadFilesToCloudinary(selectedFiles, allFiles);
+      await uploadFilesWithThreading(selectedFiles, allFiles);
     }
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
+  // New threaded upload function
+  const uploadFilesWithThreading = async (filesToUpload, allFiles) => {
+    setUploading(true);
+    setUploadProgress({});
+    const urls = [...uploadedUrls];
+    const uploadUrl = `${import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"}/api/upload`;
+    
+    // Track upload progress
+    const progressTracker = {};
+    filesToUpload.forEach((_, index) => {
+      progressTracker[index] = { status: 'pending', progress: 0 };
+    });
+    setUploadProgress(progressTracker);
+
+    // Use Web Worker if available, otherwise fallback to regular upload
+    if (workerRef.current && typeof Worker !== 'undefined') {
+      // Send files to worker for processing and upload
+      filesToUpload.forEach((file, index) => {
+        const isImage = file.type.startsWith('image/');
+        
+        if (isImage) {
+          // Process image first, then upload
+          workerRef.current.postMessage({
+            type: 'PROCESS_IMAGE',
+            data: {
+              file,
+              options: {
+                maxWidth: 1920,
+                maxHeight: 1080,
+                quality: 0.8
+              }
+            }
+          });
+        } else {
+          // Upload directly for non-images
+          workerRef.current.postMessage({
+            type: 'UPLOAD_FILE',
+            data: {
+              file,
+              uploadUrl,
+              fileIndex: index
+            }
+          });
+        }
+      });
+    } else {
+      // Fallback to regular upload
+      await uploadFilesToCloudinary(filesToUpload, allFiles);
+    }
+  };
+
+  // Worker message handlers
+  const handleUploadSuccess = (data) => {
+    const { fileIndex, url, fileName } = data;
+    
+    setUploadProgress(prev => ({
+      ...prev,
+      [fileIndex]: { status: 'completed', progress: 100 }
+    }));
+    
+    setUploadedUrls(prev => [...prev, url]);
+    
+    toast.success(`${fileName} uploaded successfully`);
+    
+    // Check if all uploads are complete
+    const allComplete = Object.values(uploadProgress).every(p => p.status === 'completed');
+    if (allComplete) {
+      setUploading(false);
+      if (onFileSelect) {
+        onFileSelect([...uploadedUrls, url], files);
+      }
+    }
+  };
+
+  const handleUploadError = (data) => {
+    const { fileIndex, error, fileName } = data;
+    
+    setUploadProgress(prev => ({
+      ...prev,
+      [fileIndex]: { status: 'error', progress: 0 }
+    }));
+    
+    setError(`Failed to upload ${fileName}: ${error}`);
+    toast.error(`Failed to upload ${fileName}`);
+    
+    setUploading(false);
+  };
+
+  const handleImageProcessed = (data) => {
+    const { processedBlob, originalFile, compressionRatio } = data;
+    
+    // Create new file from processed blob
+    const processedFile = new File([processedBlob], originalFile.name, {
+      type: originalFile.type,
+      lastModified: Date.now()
+    });
+    
+    // Upload the processed file
+    if (workerRef.current) {
+      workerRef.current.postMessage({
+        type: 'UPLOAD_FILE',
+        data: {
+          file: processedFile,
+          uploadUrl: `${import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"}/api/upload`,
+          fileIndex: files.findIndex(f => f.name === originalFile.name)
+        }
+      });
+    }
+    
+    toast.info(`Image compressed by ${compressionRatio}%`);
+  };
+
+  const handleProcessingError = (data) => {
+    const { error, fileName } = data;
+    setError(`Failed to process ${fileName}: ${error}`);
+    toast.error(`Failed to process ${fileName}`);
+  };
+
+  // Fallback upload function (for browsers without Web Worker support)
   const uploadFilesToCloudinary = async (filesToUpload, allFiles) => {
     setUploading(true);
     const urls = [...uploadedUrls];
@@ -365,27 +535,75 @@ const FileUpload = ({
         <div className="mt-3">
           <h4 className="font-medium text-sm text-gray-700 mb-2">Selected Files:</h4>
           <ul className="space-y-2">
-            {files.map((file, idx) => (
-              <li
-                key={idx}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 bg-gray-50 rounded-lg text-sm"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{getFileIcon(file.name)}</span>
-                  <span className="text-gray-700 break-all">{file.name}</span>
-                  <span className="text-xs text-gray-500">
-                    ({(file.size / 1024 / 1024).toFixed(2)} MB)
-                  </span>
-                </div>
-                <button
-                  onClick={() => handleRemoveFile(idx)}
-                  className="text-red-500 hover:text-red-700 text-xs px-2 py-1 mt-2 sm:mt-0 rounded hover:bg-red-50"
-                  disabled={uploading}
+            {files.map((file, idx) => {
+              const progress = uploadProgress[idx];
+              const isUploading = progress?.status === 'pending';
+              const isCompleted = progress?.status === 'completed';
+              const isError = progress?.status === 'error';
+              
+              return (
+                <li
+                  key={idx}
+                  className="flex flex-col p-3 bg-gray-50 rounded-lg text-sm border border-gray-200"
                 >
-                  Remove
-                </button>
-              </li>
-            ))}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <span className="text-lg flex-shrink-0">{getFileIcon(file.name)}</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 min-w-0 flex-1">
+                        <span 
+                          className="text-gray-700 font-medium truncate" 
+                          title={file.name}
+                        >
+                          {truncateFileName(file.name, windowWidth < 640 ? 15 : 25)}
+                        </span>
+                        <span className="text-xs text-gray-500 flex-shrink-0">
+                          ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveFile(idx)}
+                      className="text-red-500 hover:text-red-700 text-xs px-2 py-1 rounded hover:bg-red-50 flex-shrink-0 ml-2"
+                      disabled={uploading}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  
+                  {/* Upload Progress Indicator */}
+                  {isUploading && (
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
+                      <div 
+                        className="bg-[#E69B83] h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${progress?.progress || 0}%` }}
+                      ></div>
+                    </div>
+                  )}
+                  
+                  {/* Status Indicators */}
+                  <div className="flex items-center gap-2 text-xs">
+                    {isUploading && (
+                      <span className="text-blue-600 flex items-center gap-1">
+                        <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+                        Uploading...
+                      </span>
+                    )}
+                    {isCompleted && (
+                      <span className="text-green-600 flex items-center gap-1">
+                        <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                        Uploaded
+                      </span>
+                    )}
+                    {isError && (
+                      <span className="text-red-600 flex items-center gap-1">
+                        <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+                        Failed
+                      </span>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

@@ -687,7 +687,7 @@ import {
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <FileUpload
             label="Upload Images"
-            description="You can upload multiple images"
+            description="You can upload multiple images (max 5, 100MB each)"
             onFileSelect={(urls, files) => {
               setImageFiles(files);
               setImageUrls(urls);
@@ -697,10 +697,10 @@ import {
             initialFiles={imageFiles}
             initialUrls={imageUrls}
           />
-  
+
           <FileUpload
             label="Upload Videos"
-            description="You can upload multiple videos"
+            description="You can upload multiple videos (max 2, 50MB each)"
             onFileSelect={(urls, files) => {
               setVideoFiles(files);
               setVideoUrls(urls);
