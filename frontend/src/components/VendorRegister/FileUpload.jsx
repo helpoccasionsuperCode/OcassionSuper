@@ -210,7 +210,6 @@ const FileUpload = ({
   const [files, setFiles] = useState(initialFiles);
   const [uploadedUrls, setUploadedUrls] = useState(initialUrls);
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState({});
   const [error, setError] = useState("");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -311,16 +310,8 @@ const FileUpload = ({
   // New threaded upload function
   const uploadFilesWithThreading = async (filesToUpload, allFiles) => {
     setUploading(true);
-    setUploadProgress({});
     const urls = [...uploadedUrls];
     const uploadUrl = `${import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"}/api/upload`;
-    
-    // Track upload progress
-    const progressTracker = {};
-    filesToUpload.forEach((_, index) => {
-      progressTracker[index] = { status: 'pending', progress: 0 };
-    });
-    setUploadProgress(progressTracker);
 
     // Use Web Worker if available, otherwise fallback to regular upload
     if (workerRef.current && typeof Worker !== 'undefined') {
@@ -361,34 +352,22 @@ const FileUpload = ({
 
   // Worker message handlers
   const handleUploadSuccess = (data) => {
-    const { fileIndex, url, fileName } = data;
-    
-    setUploadProgress(prev => ({
-      ...prev,
-      [fileIndex]: { status: 'completed', progress: 100 }
-    }));
+    const { url } = data;
     
     setUploadedUrls(prev => [...prev, url]);
     
-    toast.success(`${fileName} uploaded successfully`);
-    
-    // Check if all uploads are complete
-    const allComplete = Object.values(uploadProgress).every(p => p.status === 'completed');
-    if (allComplete) {
+    // Check if all uploads are complete by comparing with total files
+    if (uploadedUrls.length + 1 >= files.length) {
       setUploading(false);
       if (onFileSelect) {
         onFileSelect([...uploadedUrls, url], files);
       }
+      toast.success("Files uploaded successfully");
     }
   };
 
   const handleUploadError = (data) => {
-    const { fileIndex, error, fileName } = data;
-    
-    setUploadProgress(prev => ({
-      ...prev,
-      [fileIndex]: { status: 'error', progress: 0 }
-    }));
+    const { error, fileName } = data;
     
     setError(`Failed to upload ${fileName}: ${error}`);
     toast.error(`Failed to upload ${fileName}`);
@@ -535,75 +514,32 @@ const FileUpload = ({
         <div className="mt-3">
           <h4 className="font-medium text-sm text-gray-700 mb-2">Selected Files:</h4>
           <ul className="space-y-2">
-            {files.map((file, idx) => {
-              const progress = uploadProgress[idx];
-              const isUploading = progress?.status === 'pending';
-              const isCompleted = progress?.status === 'completed';
-              const isError = progress?.status === 'error';
-              
-              return (
-                <li
-                  key={idx}
-                  className="flex flex-col p-3 bg-gray-50 rounded-lg text-sm border border-gray-200"
+            {files.map((file, idx) => (
+              <li
+                key={idx}
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 bg-gray-50 rounded-lg text-sm"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{getFileIcon(file.name)}</span>
+                  <span 
+                    className="text-gray-700 truncate" 
+                    title={file.name}
+                  >
+                    {truncateFileName(file.name, windowWidth < 640 ? 15 : 25)}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                  </span>
+                </div>
+                <button
+                  onClick={() => handleRemoveFile(idx)}
+                  className="text-red-500 hover:text-red-700 text-xs px-2 py-1 mt-2 sm:mt-0 rounded hover:bg-red-50"
+                  disabled={uploading}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <span className="text-lg flex-shrink-0">{getFileIcon(file.name)}</span>
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 min-w-0 flex-1">
-                        <span 
-                          className="text-gray-700 font-medium truncate" 
-                          title={file.name}
-                        >
-                          {truncateFileName(file.name, windowWidth < 640 ? 15 : 25)}
-                        </span>
-                        <span className="text-xs text-gray-500 flex-shrink-0">
-                          ({(file.size / 1024 / 1024).toFixed(2)} MB)
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleRemoveFile(idx)}
-                      className="text-red-500 hover:text-red-700 text-xs px-2 py-1 rounded hover:bg-red-50 flex-shrink-0 ml-2"
-                      disabled={uploading}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                  
-                  {/* Upload Progress Indicator */}
-                  {isUploading && (
-                    <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
-                      <div 
-                        className="bg-[#E69B83] h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${progress?.progress || 0}%` }}
-                      ></div>
-                    </div>
-                  )}
-                  
-                  {/* Status Indicators */}
-                  <div className="flex items-center gap-2 text-xs">
-                    {isUploading && (
-                      <span className="text-blue-600 flex items-center gap-1">
-                        <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-                        Uploading...
-                      </span>
-                    )}
-                    {isCompleted && (
-                      <span className="text-green-600 flex items-center gap-1">
-                        <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                        Uploaded
-                      </span>
-                    )}
-                    {isError && (
-                      <span className="text-red-600 flex items-center gap-1">
-                        <div className="w-2 h-2 bg-red-600 rounded-full"></div>
-                        Failed
-                      </span>
-                    )}
-                  </div>
-                </li>
-              );
-            })}
+                  Remove
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
       )}
