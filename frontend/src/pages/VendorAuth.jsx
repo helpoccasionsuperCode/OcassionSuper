@@ -200,8 +200,8 @@ import WhyChooseUs from "../components/WhyChooseUs";
 import Register from "../components/VendorRegister/Register"
 import Login from "../components/Login"
 import Footer from "../components/Footer"
-const adminPhone = import.meta.env.VITE_PHONE;
-
+// const adminPhone = import.meta.env.VITE_PHONE;
+const adminPhone = "9876543210";
 
 const VendorReg = () => {
   const navigate = useNavigate();
