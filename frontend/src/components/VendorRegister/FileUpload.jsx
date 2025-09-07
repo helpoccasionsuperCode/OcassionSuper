@@ -217,7 +217,19 @@ const FileUpload = ({
   // Sync component state with props when they change (for file persistence)
   // Only sync when not uploading and when props have actual content
   useEffect(() => {
+    console.log("FileUpload useEffect - Sync check:", {
+      isUploading: isUploadingRef.current,
+      initialFilesLength: initialFiles.length,
+      initialUrlsLength: initialUrls.length,
+      currentFilesLength: files.length,
+      currentUrlsLength: uploadedUrls.length
+    });
+    
     if (!isUploadingRef.current && (initialFiles.length > 0 || initialUrls.length > 0)) {
+      console.log("FileUpload - Syncing with props:", {
+        initialFiles,
+        initialUrls
+      });
       setFiles(initialFiles);
       setUploadedUrls(initialUrls);
     }
@@ -365,17 +377,21 @@ const FileUpload = ({
   const handleUploadSuccess = (data) => {
     const { url } = data;
     
-    setUploadedUrls(prev => [...prev, url]);
-    
-    // Check if all uploads are complete by comparing with total files
-    if (uploadedUrls.length + 1 >= files.length) {
-      setUploading(false);
-      isUploadingRef.current = false;
-      if (onFileSelect) {
-        onFileSelect([...uploadedUrls, url], files);
+    setUploadedUrls(prev => {
+      const newUrls = [...prev, url];
+      
+      // Check if all uploads are complete by comparing with total files
+      if (newUrls.length >= files.length) {
+        setUploading(false);
+        isUploadingRef.current = false;
+        if (onFileSelect) {
+          onFileSelect(newUrls, files);
+        }
+        toast.success("Files uploaded successfully");
       }
-      toast.success("Files uploaded successfully");
-    }
+      
+      return newUrls;
+    });
   };
 
   const handleUploadError = (data) => {
@@ -525,6 +541,16 @@ const FileUpload = ({
         />
       </label>
 
+      {(() => {
+        console.log("FileUpload render - files check:", {
+          filesLength: files.length,
+          files: files,
+          uploading: uploading,
+          isUploadingRef: isUploadingRef.current
+        });
+        return null;
+      })()}
+      
       {files.length > 0 && (
         <div className="mt-3">
           <h4 className="font-medium text-sm text-gray-700 mb-2">Selected Files:</h4>
