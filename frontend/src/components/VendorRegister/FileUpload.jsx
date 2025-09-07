@@ -216,6 +216,7 @@ const FileUpload = ({
 
   // Sync component state with props when they change (for file persistence)
   // Only sync when not uploading and when props have actual content
+  // Also avoid syncing if we already have files (to prevent overriding after upload)
   useEffect(() => {
     console.log("FileUpload useEffect - Sync check:", {
       isUploading: isUploadingRef.current,
@@ -225,7 +226,13 @@ const FileUpload = ({
       currentUrlsLength: uploadedUrls.length
     });
     
-    if (!isUploadingRef.current && (initialFiles.length > 0 || initialUrls.length > 0)) {
+    // Only sync if:
+    // 1. Not currently uploading
+    // 2. Props have content
+    // 3. We don't already have files (to prevent overriding after upload)
+    if (!isUploadingRef.current && 
+        (initialFiles.length > 0 || initialUrls.length > 0) &&
+        files.length === 0) {
       console.log("FileUpload - Syncing with props:", {
         initialFiles,
         initialUrls
@@ -318,6 +325,11 @@ const FileUpload = ({
     }
 
     const allFiles = [...files, ...selectedFiles];
+    console.log("handleFileChange - setting files:", {
+      currentFiles: files,
+      selectedFiles,
+      allFiles
+    });
     setFiles(allFiles);
     setError("");
 
@@ -377,14 +389,28 @@ const FileUpload = ({
   const handleUploadSuccess = (data) => {
     const { url } = data;
     
+    console.log("handleUploadSuccess called:", {
+      url,
+      currentFilesLength: files.length,
+      currentUrlsLength: uploadedUrls.length
+    });
+    
     setUploadedUrls(prev => {
       const newUrls = [...prev, url];
+      
+      console.log("Upload success - new URLs:", {
+        newUrlsLength: newUrls.length,
+        filesLength: files.length,
+        newUrls,
+        files
+      });
       
       // Check if all uploads are complete by comparing with total files
       if (newUrls.length >= files.length) {
         setUploading(false);
         isUploadingRef.current = false;
         if (onFileSelect) {
+          console.log("Calling onFileSelect with:", { newUrls, files });
           onFileSelect(newUrls, files);
         }
         toast.success("Files uploaded successfully");
