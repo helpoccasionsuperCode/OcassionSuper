@@ -82,23 +82,25 @@ const reviews = [
 
 const CustomerStories = () => {
     return (
-        <section className="py-16 px-4 md:px-16 bg-white">
-            <div className="text-center mb-12">
-                <span className="inline-flex items-center gap-2 bg-[#ecebeb] text-[#E69B83] px-4 py-2 rounded-full text-lg font-medium">
-                    ❤️ Customer Stories
-                </span>
-                <h2 className="text-3xl md:text-4xl font-bold mt-4">
-                    What Our Customers Say
-                </h2>
-                <p className="text-gray-500 text-xl mt-1">
-                    Real experiences from real customers who trusted OccasionSuper
-                </p>
-            </div>
+        <section className="py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 bg-white">
+            <div className="max-w-7xl mx-auto">
+                <div className="text-center mb-8 sm:mb-12">
+                    <span className="inline-flex items-center gap-2 bg-[#ecebeb] text-[#E69B83] px-3 sm:px-4 py-2 rounded-full text-sm sm:text-base lg:text-lg font-medium">
+                        ❤️ Customer Stories
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mt-4 sm:mt-6">
+                        What Our Customers Say
+                    </h2>
+                    <p className="text-gray-500 text-base sm:text-lg lg:text-xl mt-2 sm:mt-3 max-w-3xl mx-auto px-4">
+                        Real experiences from real customers who trusted OccasionSuper
+                    </p>
+                </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
-                {reviews.map((review, index) => (
-                    <ReviewCard key={index} review={review} />
-                ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+                    {reviews.map((review, index) => (
+                        <ReviewCard key={index} review={review} />
+                    ))}
+                </div>
             </div>
         </section>
 

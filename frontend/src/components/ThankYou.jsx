@@ -32,7 +32,7 @@ const ThankYou = () => {
         </p>
 
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/vendor-auth")}
           className="px-6 py-2 bg-[#E69B83] text-white rounded-lg hover:bg-[#c16a4d] transition"
         >
           Go Home

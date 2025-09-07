@@ -192,7 +192,7 @@ const VendorStep4 = ({ formData, setFormData }) => {
               Account Number <span className="text-blue-500 text-sm">(Optional)</span>
             </label>
             <input
-              type="text"
+              type="number"
               name="accountNumber"
               value={bankDetails.accountNumber}
               onChange={handleChange}
@@ -226,7 +226,7 @@ const VendorStep4 = ({ formData, setFormData }) => {
           <Shield className="w-6 h-6 text-orange-500" />
           Security & Privacy
         </h3>
-        <ul className="space-y-2 text-gray-700">
+        {/* <ul className="space-y-2 text-gray-700">
           <li className="flex items-center gap-2">
             <CircleCheck className="w-4 h-4 text-green-500" />
             Bank details are encrypted and stored securely
@@ -247,7 +247,38 @@ const VendorStep4 = ({ formData, setFormData }) => {
             <CircleCheck className="w-4 h-4 text-green-500" />
             Bank details are optional - you can add them later
           </li>
-        </ul>
+        </ul> */}
+        <ul className="
+  space-y-2 md:space-y-3 
+  text-sm sm:text-base md:text-lg 
+  text-gray-700
+">
+  <li className="flex items-start sm:items-center gap-2 sm:gap-3">
+    <CircleCheck className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-green-500 flex-shrink-0" />
+    <span>Bank details are encrypted and stored securely</span>
+  </li>
+
+  <li className="flex items-start sm:items-center gap-2 sm:gap-3">
+    <CircleCheck className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-green-500 flex-shrink-0" />
+    <span>Account numbers are masked in all interfaces</span>
+  </li>
+
+  <li className="flex items-start sm:items-center gap-2 sm:gap-3">
+    <CircleCheck className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-green-500 flex-shrink-0" />
+    <span>Used only for legitimate payout processing</span>
+  </li>
+
+  <li className="flex items-start sm:items-center gap-2 sm:gap-3">
+    <CircleCheck className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-green-500 flex-shrink-0" />
+    <span>Compliant with banking security standards</span>
+  </li>
+
+  <li className="flex items-start sm:items-center gap-2 sm:gap-3">
+    <CircleCheck className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-green-500 flex-shrink-0" />
+    <span>Bank details are optional – you can add them later</span>
+  </li>
+</ul>
+
       </div >
 
 
