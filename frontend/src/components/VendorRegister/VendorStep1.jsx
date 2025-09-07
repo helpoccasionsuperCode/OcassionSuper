@@ -449,6 +449,17 @@ const VendorStep1 = ({
   const videoFiles = fileStates?.videoFiles || [];
   const videoUrls = fileStates?.videoUrls || [];
   
+  // Debug: Log file states when component mounts or fileStates change
+  useEffect(() => {
+    console.log("VendorStep1 - File States:", {
+      imageFiles: imageFiles.length,
+      imageUrls: imageUrls.length,
+      videoFiles: videoFiles.length,
+      videoUrls: videoUrls.length,
+      allFileStates: fileStates
+    });
+  }, [fileStates, imageFiles, imageUrls, videoFiles, videoUrls]);
+  
     const categories = [
       { id: 1, name: "Wedding Services", icon: Building2 },
       { id: 2, name: "Catering", icon: UtensilsCrossed },
@@ -693,7 +704,7 @@ const VendorStep1 = ({
             label="Upload Images"
             description="You can upload multiple images (max 5, 100MB each)"
             onFileSelect={(urls, files) => {
-              updateFileState('image', 'image', files, urls);
+              updateFileState('', 'image', files, urls);
               setFormData((prev) => ({ ...prev, images: urls }));
             }}
             required={false}
@@ -703,9 +714,9 @@ const VendorStep1 = ({
 
           <FileUpload
             label="Upload Videos"
-            description="You can upload multiple videos (max 2, 50MB each)"
+            description="You can upload multiple videos (max 2, less then 50MB each)"
             onFileSelect={(urls, files) => {
-              updateFileState('video', 'video', files, urls);
+              updateFileState('', 'video', files, urls);
               setFormData((prev) => ({ ...prev, videos: urls }));
             }}
             required={false}

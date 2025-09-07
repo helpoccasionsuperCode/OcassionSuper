@@ -1,5 +1,5 @@
 import FileUpload from "./FileUpload";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CircleCheck, Shield } from "lucide-react";
 
 const VendorStep3 = ({ formData, setFormData, fileStates, updateFileState }) => {
@@ -10,6 +10,19 @@ const VendorStep3 = ({ formData, setFormData, fileStates, updateFileState }) => 
   const businessUrls = fileStates?.businessUrls || [];
   const idFiles = fileStates?.idFiles || [];
   const idUrls = fileStates?.idUrls || [];
+  
+  // Debug: Log file states when component mounts or fileStates change
+  useEffect(() => {
+    console.log("VendorStep3 - File States:", {
+      gstFiles: gstFiles.length,
+      gstUrls: gstUrls.length,
+      businessFiles: businessFiles.length,
+      businessUrls: businessUrls.length,
+      idFiles: idFiles.length,
+      idUrls: idUrls.length,
+      allFileStates: fileStates
+    });
+  }, [fileStates, gstFiles, gstUrls, businessFiles, businessUrls, idFiles, idUrls]);
 
 
   return (
@@ -24,7 +37,7 @@ const VendorStep3 = ({ formData, setFormData, fileStates, updateFileState }) => 
         label="GST Certificate"
         description="Upload GST certificate for tax compliance (PDF, JPG, PNG - max 10MB)"
         onFileSelect={(urls, files) => {
-          updateFileState('gst', 'gst', files, urls);
+          updateFileState('', 'gst', files, urls);
           setFormData((prev) => ({
             ...prev,
             documents: { ...prev.documents, gst: urls },
@@ -39,7 +52,7 @@ const VendorStep3 = ({ formData, setFormData, fileStates, updateFileState }) => 
         label="Business Registration"
         description="Shop license or business registration document (PDF, JPG, PNG - max 10MB)"
         onFileSelect={(urls, files) => {
-          updateFileState('business', 'business', files, urls);
+          updateFileState('', 'business', files, urls);
           setFormData((prev) => ({
             ...prev,
             documents: { ...prev.documents, businessProof: urls },
@@ -55,7 +68,7 @@ const VendorStep3 = ({ formData, setFormData, fileStates, updateFileState }) => 
         label="ID Proof"
         description="Aadhaar, PAN, or Passport (PDF, JPG, PNG - max 10MB)"
         onFileSelect={(urls, files) => {
-          updateFileState('id', 'id', files, urls);
+          updateFileState('', 'id', files, urls);
           setFormData((prev) => ({
             ...prev,
             documents: { ...prev.documents, idProof: urls },
