@@ -207,6 +207,7 @@ const FileUpload = ({
 }) => {
   const fileInputRef = useRef(null);
   const workerRef = useRef(null);
+  const isUploadingRef = useRef(false);
   const [files, setFiles] = useState(initialFiles);
   const [uploadedUrls, setUploadedUrls] = useState(initialUrls);
   const [uploading, setUploading] = useState(false);
@@ -214,9 +215,12 @@ const FileUpload = ({
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   // Sync component state with props when they change (for file persistence)
+  // Only sync when not uploading and when props have actual content
   useEffect(() => {
-    setFiles(initialFiles);
-    setUploadedUrls(initialUrls);
+    if (!isUploadingRef.current && (initialFiles.length > 0 || initialUrls.length > 0)) {
+      setFiles(initialFiles);
+      setUploadedUrls(initialUrls);
+    }
   }, [initialFiles, initialUrls]);
 
   // Initialize Web Worker and window resize listener
@@ -316,6 +320,7 @@ const FileUpload = ({
   // New threaded upload function
   const uploadFilesWithThreading = async (filesToUpload, allFiles) => {
     setUploading(true);
+    isUploadingRef.current = true;
     const urls = [...uploadedUrls];
     const uploadUrl = `${import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"}/api/upload`;
 
@@ -365,6 +370,7 @@ const FileUpload = ({
     // Check if all uploads are complete by comparing with total files
     if (uploadedUrls.length + 1 >= files.length) {
       setUploading(false);
+      isUploadingRef.current = false;
       if (onFileSelect) {
         onFileSelect([...uploadedUrls, url], files);
       }
@@ -379,6 +385,7 @@ const FileUpload = ({
     toast.error(`Failed to upload ${fileName}`);
     
     setUploading(false);
+    isUploadingRef.current = false;
   };
 
   const handleImageProcessed = (data) => {
@@ -414,6 +421,7 @@ const FileUpload = ({
   // Fallback upload function (for browsers without Web Worker support)
   const uploadFilesToCloudinary = async (filesToUpload, allFiles) => {
     setUploading(true);
+    isUploadingRef.current = true;
     const urls = [...uploadedUrls];
 
     try {
@@ -453,6 +461,7 @@ const FileUpload = ({
       if (onFileSelect) onFileSelect(null);
     } finally {
       setUploading(false);
+      isUploadingRef.current = false;
     }
   };
 
