@@ -447,17 +447,17 @@ const VendorReg = () => {
 
 
 
-      <div className="fixed right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-50 flex flex-col items-end gap-2 sm:gap-3 lg:gap-4">
+<div className="fixed right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-50 flex flex-col items-end gap-2 sm:gap-3 lg:gap-4">
         {/* Phone Button */}
         <Link
           to={`tel:+${adminPhone}`}
-          className="group flex items-center bg-[#4A3F3B] hover:bg-[#6b5a53] text-white p-2 sm:p-3 rounded-lg shadow-md transition-all duration-300 hover:scale-105 overflow-hidden"
+          className="group flex items-center bg-[#4A3F3B] hover:bg-[#6b5a53] text-white rounded-lg shadow-md transition-all duration-300 overflow-hidden w-10 h-10 hover:w-auto hover:px-3 justify-center hover:justify-start"
           title="Call Admin"
         >
-          <span className="opacity-0 group-hover:opacity-100 transform translate-x-full group-hover:translate-x-0 transition-all duration-300 text-xs sm:text-sm mr-2 whitespace-nowrap">
+          <FaPhone className="w-4 h-4 flex-shrink-0" />
+          <span className="opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm ml-2 whitespace-nowrap">
             +{adminPhone}
           </span>
-          <FaPhone className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
         </Link>
         
         {/* WhatsApp Button */}
@@ -465,16 +465,15 @@ const VendorReg = () => {
           to={`https://wa.me/${adminPhone}?text=`}
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center bg-green-500 hover:bg-green-600 text-white p-2 sm:p-3 rounded-lg shadow-md transition-all duration-300 hover:scale-105 overflow-hidden"
+          className="group flex items-center bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md transition-all duration-300 overflow-hidden w-10 h-10 hover:w-auto hover:px-3 justify-center hover:justify-start"
           title="WhatsApp Admin"
         >
-          <span className="opacity-0 group-hover:opacity-100 transform translate-x-full group-hover:translate-x-0 transition-all duration-300 text-xs sm:text-sm mr-2 whitespace-nowrap">
+          <FaWhatsapp className="w-4 h-4 flex-shrink-0" />
+          <span className="opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm ml-2 whitespace-nowrap">
             +{adminPhone}
           </span>
-          <FaWhatsapp className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
         </Link>
       </div>
-
 
 
       {/* Popup Modal for Register */}
