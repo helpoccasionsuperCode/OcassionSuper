@@ -109,7 +109,8 @@
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Phone, Mail, Facebook, Instagram, Twitter } from "lucide-react";
-const adminPhone = import.meta.env.VITE_PHONE;
+// const adminPhone = import.meta.env.VITE_PHONE;
+const adminPhone = "9870823328";
 
 function Footer() {
   const navigate = useNavigate();
