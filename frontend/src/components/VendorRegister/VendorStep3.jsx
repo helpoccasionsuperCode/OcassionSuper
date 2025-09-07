@@ -24,7 +24,7 @@ const VendorStep3 = ({ formData, setFormData, fileStates, updateFileState }) => 
         label="GST Certificate"
         description="Upload GST certificate for tax compliance (PDF, JPG, PNG - max 10MB)"
         onFileSelect={(urls, files) => {
-          updateFileState('gst', '', files, urls);
+          updateFileState('gst', 'gst', files, urls);
           setFormData((prev) => ({
             ...prev,
             documents: { ...prev.documents, gst: urls },
@@ -39,7 +39,7 @@ const VendorStep3 = ({ formData, setFormData, fileStates, updateFileState }) => 
         label="Business Registration"
         description="Shop license or business registration document (PDF, JPG, PNG - max 10MB)"
         onFileSelect={(urls, files) => {
-          updateFileState('business', '', files, urls);
+          updateFileState('business', 'business', files, urls);
           setFormData((prev) => ({
             ...prev,
             documents: { ...prev.documents, businessProof: urls },
@@ -55,7 +55,7 @@ const VendorStep3 = ({ formData, setFormData, fileStates, updateFileState }) => 
         label="ID Proof"
         description="Aadhaar, PAN, or Passport (PDF, JPG, PNG - max 10MB)"
         onFileSelect={(urls, files) => {
-          updateFileState('id', '', files, urls);
+          updateFileState('id', 'id', files, urls);
           setFormData((prev) => ({
             ...prev,
             documents: { ...prev.documents, idProof: urls },

@@ -693,7 +693,7 @@ const VendorStep1 = ({
             label="Upload Images"
             description="You can upload multiple images (max 5, 100MB each)"
             onFileSelect={(urls, files) => {
-              updateFileState('image', '', files, urls);
+              updateFileState('image', 'image', files, urls);
               setFormData((prev) => ({ ...prev, images: urls }));
             }}
             required={false}
@@ -705,7 +705,7 @@ const VendorStep1 = ({
             label="Upload Videos"
             description="You can upload multiple videos (max 2, 50MB each)"
             onFileSelect={(urls, files) => {
-              updateFileState('video', '', files, urls);
+              updateFileState('video', 'video', files, urls);
               setFormData((prev) => ({ ...prev, videos: urls }));
             }}
             required={false}
