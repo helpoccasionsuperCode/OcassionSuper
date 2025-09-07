@@ -472,11 +472,27 @@ const Register = () => {
 
   // File state management functions
   const updateFileState = (stepType, fileType, files, urls) => {
-    setFileStates(prev => ({
-      ...prev,
-      [`${stepType}${fileType}Files`]: files,
-      [`${stepType}${fileType}Urls`]: urls,
-    }));
+    const filesKey = `${stepType}${fileType}Files`;
+    const urlsKey = `${stepType}${fileType}Urls`;
+    
+    console.log("updateFileState called:", {
+      stepType,
+      fileType,
+      filesKey,
+      urlsKey,
+      filesCount: files.length,
+      urlsCount: urls.length
+    });
+    
+    setFileStates(prev => {
+      const newState = {
+        ...prev,
+        [filesKey]: files,
+        [urlsKey]: urls,
+      };
+      console.log("New fileStates:", newState);
+      return newState;
+    });
   };
 
   const getFileState = (stepType, fileType) => {

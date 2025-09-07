@@ -456,7 +456,9 @@ const VendorStep1 = ({
       imageUrls: imageUrls.length,
       videoFiles: videoFiles.length,
       videoUrls: videoUrls.length,
-      allFileStates: fileStates
+      allFileStates: fileStates,
+      imageFilesData: imageFiles,
+      videoFilesData: videoFiles
     });
   }, [fileStates, imageFiles, imageUrls, videoFiles, videoUrls]);
   
