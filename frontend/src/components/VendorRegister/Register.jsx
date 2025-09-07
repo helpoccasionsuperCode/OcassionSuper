@@ -416,6 +416,22 @@ const Register = () => {
     },
   });
 
+  // File state management for persistence across steps
+  const [fileStates, setFileStates] = useState({
+    // Step 1 files
+    imageFiles: [],
+    imageUrls: [],
+    videoFiles: [],
+    videoUrls: [],
+    // Step 3 files
+    gstFiles: [],
+    gstUrls: [],
+    businessFiles: [],
+    businessUrls: [],
+    idFiles: [],
+    idUrls: [],
+  });
+
   const isStepValid = (currentStep) => {
     if (currentStep === 1) {
       const hasOthers = formData.categories.includes("Others");
@@ -452,6 +468,22 @@ const Register = () => {
           : [...prev.categories, name],
       };
     });
+  };
+
+  // File state management functions
+  const updateFileState = (stepType, fileType, files, urls) => {
+    setFileStates(prev => ({
+      ...prev,
+      [`${stepType}${fileType}Files`]: files,
+      [`${stepType}${fileType}Urls`]: urls,
+    }));
+  };
+
+  const getFileState = (stepType, fileType) => {
+    return {
+      files: fileStates[`${stepType}${fileType}Files`] || [],
+      urls: fileStates[`${stepType}${fileType}Urls`] || [],
+    };
   };
 
   const handleChange = (e) => {
@@ -604,6 +636,8 @@ const Register = () => {
           handleChange={handleChange}
           handleCategorySelect={handleCategorySelect}
           setFormData={setFormData}
+          fileStates={fileStates}
+          updateFileState={updateFileState}
         />
       )}
       {step === 2 && (
@@ -619,6 +653,8 @@ const Register = () => {
           formData={formData}
           setFormData={setFormData}
           onPrev={() => setStep(2)}
+          fileStates={fileStates}
+          updateFileState={updateFileState}
         />
       )}
       {step === 4 && (
@@ -640,23 +676,41 @@ const Register = () => {
         </button>
 
         {step < 4 ? (
-          <button
-            onClick={() => {
-              if (!formData.email || !formData.email.endsWith("@gmail.com")) {
-                toast.error("Email must contain @gmail.com");
-                return;
-              }
-              if (!formData.phone || !/^(\d){10}$/.test(String(formData.phone))) {
-                toast.error("Invalid mobile number. Please enter exactly 10 digits.");
-                return;
-              }
-              setStep((prev) => Math.min(prev + 1, 4));
-            }}
-            disabled={!isStepValid(step)}
-            className="px-6 py-2 rounded-lg bg-[#E69B83] hover:bg-[#c16a4d] text-white disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next →
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => {
+                console.log("=== FILE PERSISTENCE TEST ===");
+                console.log("Current file states:", fileStates);
+                console.log("Current form data:", formData);
+                console.log("Image files:", fileStates?.imageFiles?.length || 0);
+                console.log("Video files:", fileStates?.videoFiles?.length || 0);
+                console.log("GST files:", fileStates?.gstFiles?.length || 0);
+                console.log("Business files:", fileStates?.businessFiles?.length || 0);
+                console.log("ID files:", fileStates?.idFiles?.length || 0);
+                toast.success(`Files persisted: ${Object.keys(fileStates).filter(key => fileStates[key]?.length > 0).length} file types`);
+              }}
+              className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm"
+            >
+              Preview Files
+            </button>
+            <button
+              onClick={() => {
+                if (!formData.email || !formData.email.endsWith("@gmail.com")) {
+                  toast.error("Email must contain @gmail.com");
+                  return;
+                }
+                if (!formData.phone || !/^(\d){10}$/.test(String(formData.phone))) {
+                  toast.error("Invalid mobile number. Please enter exactly 10 digits.");
+                  return;
+                }
+                setStep((prev) => Math.min(prev + 1, 4));
+              }}
+              disabled={!isStepValid(step)}
+              className="px-6 py-2 rounded-lg bg-[#E69B83] hover:bg-[#c16a4d] text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next →
+            </button>
+          </div>
         ) : (
           <button
             onClick={handleSubmit}

@@ -431,19 +431,23 @@ import {
   import Autocomplete from "@mui/material/Autocomplete";
   import { toast } from "react-toastify";
   
-  const VendorStep1 = ({
-    formData,
-    handleChange,
-    handleCategorySelect,
-    setFormData,
-  }) => {
-    const [cityOptions, setCityOptions] = useState([]);
-    const [inputValue, setInputValue] = useState(formData.city || "");
-    const [showOthersInput, setShowOthersInput] = useState(false);
-    const [imageFiles, setImageFiles] = useState([]);
-    const [imageUrls, setImageUrls] = useState([]);
-    const [videoFiles, setVideoFiles] = useState([]);
-    const [videoUrls, setVideoUrls] = useState([]);
+const VendorStep1 = ({
+  formData,
+  handleChange,
+  handleCategorySelect,
+  setFormData,
+  fileStates,
+  updateFileState,
+}) => {
+  const [cityOptions, setCityOptions] = useState([]);
+  const [inputValue, setInputValue] = useState(formData.city || "");
+  const [showOthersInput, setShowOthersInput] = useState(false);
+  
+  // Use persistent file state from parent
+  const imageFiles = fileStates?.imageFiles || [];
+  const imageUrls = fileStates?.imageUrls || [];
+  const videoFiles = fileStates?.videoFiles || [];
+  const videoUrls = fileStates?.videoUrls || [];
   
     const categories = [
       { id: 1, name: "Wedding Services", icon: Building2 },
@@ -689,8 +693,7 @@ import {
             label="Upload Images"
             description="You can upload multiple images (max 5, 100MB each)"
             onFileSelect={(urls, files) => {
-              setImageFiles(files);
-              setImageUrls(urls);
+              updateFileState('image', '', files, urls);
               setFormData((prev) => ({ ...prev, images: urls }));
             }}
             required={false}
@@ -702,8 +705,7 @@ import {
             label="Upload Videos"
             description="You can upload multiple videos (max 2, 50MB each)"
             onFileSelect={(urls, files) => {
-              setVideoFiles(files);
-              setVideoUrls(urls);
+              updateFileState('video', '', files, urls);
               setFormData((prev) => ({ ...prev, videos: urls }));
             }}
             required={false}
