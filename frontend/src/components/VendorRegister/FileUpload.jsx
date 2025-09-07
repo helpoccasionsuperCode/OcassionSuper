@@ -213,6 +213,12 @@ const FileUpload = ({
   const [error, setError] = useState("");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+  // Sync component state with props when they change (for file persistence)
+  useEffect(() => {
+    setFiles(initialFiles);
+    setUploadedUrls(initialUrls);
+  }, [initialFiles, initialUrls]);
+
   // Initialize Web Worker and window resize listener
   useEffect(() => {
     if (typeof Worker !== 'undefined') {
