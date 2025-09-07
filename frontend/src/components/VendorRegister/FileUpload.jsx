@@ -647,7 +647,7 @@ const FileUpload = ({
     const selectedFiles = Array.from(e.target.files);
 
     if (selectedFiles.length === 0) {
-      if (onFileSelect) onFileSelect(null);
+      if (onFileSelect) onFileSelect(null, []);
       return;
     }
 
@@ -725,7 +725,7 @@ const FileUpload = ({
       const message = error?.message || "Upload failed";
       setError(message);
       toast.error(message);
-      if (onFileSelect) onFileSelect(null);
+      if (onFileSelect) onFileSelect(null, []);
     } finally {
       setUploading(false);
     }
@@ -773,7 +773,7 @@ const FileUpload = ({
           e.preventDefault();
           setIsDragging(false);
           if (uploading) return;
-          const droppedFiles = Array.from(e.dataTransfer.files);
+          const droppedFiles = e.dataTransfer.files;
           handleFileChange({ target: { files: droppedFiles } });
         }}
         className={`flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 cursor-pointer transition w-full text-center ${uploading ? "opacity-50 cursor-not-allowed" : ""

@@ -768,6 +768,9 @@ const Register = () => {
     },
   });
 
+  // File state management
+  const [fileStates, setFileStates] = useState({});
+
   const isStepValid = (currentStep) => {
     if (currentStep === 1) {
       const hasOthers = formData.categories.includes("Others");
@@ -804,6 +807,18 @@ const Register = () => {
           : [...prev.categories, name],
       };
     });
+  };
+
+  // File state management functions
+  const updateFileState = (stepType, fileType, files, urls) => {
+    const filesKey = `${stepType}${fileType}Files`;
+    const urlsKey = `${stepType}${fileType}Urls`;
+    
+    setFileStates(prev => ({
+      ...prev,
+      [filesKey]: files,
+      [urlsKey]: urls,
+    }));
   };
 
   const handleChange = (e) => {
@@ -957,6 +972,8 @@ const Register = () => {
           handleChange={handleChange}
           handleCategorySelect={handleCategorySelect}
           setFormData={setFormData}
+          fileStates={fileStates}
+          updateFileState={updateFileState}
         />
       )}
       {step === 2 && (
@@ -972,6 +989,8 @@ const Register = () => {
           formData={formData}
           setFormData={setFormData}
           onPrev={() => setStep(2)}
+          fileStates={fileStates}
+          updateFileState={updateFileState}
         />
       )}
       {step === 4 && (
