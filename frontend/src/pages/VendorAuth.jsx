@@ -205,7 +205,7 @@ const adminPhone = "9870823328";
 
 const VendorReg = () => {
   const navigate = useNavigate();
-  
+
 
   const features = [
     {
@@ -447,19 +447,19 @@ const VendorReg = () => {
 
 
 
-<div className="fixed right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-50 flex flex-col items-end gap-2 sm:gap-3 lg:gap-4">
+      <div className="fixed right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-50 flex flex-col items-end gap-2 sm:gap-3 lg:gap-4">
         {/* Phone Button */}
         <Link
           to={`tel:+${adminPhone}`}
           className="group flex items-center bg-[#4A3F3B] hover:bg-[#6b5a53] text-white rounded-lg shadow-md transition-all duration-300 overflow-hidden w-10 h-10 hover:w-auto hover:px-3 justify-center hover:justify-start"
           title="Call Admin"
         >
-          <FaPhone className="w-4 h-4 flex-shrink-0" />
+          <FaPhone className="w-5 h-5 flex-shrink-0" />
           <span className="opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm ml-2 whitespace-nowrap">
             +{adminPhone}
           </span>
         </Link>
-        
+
         {/* WhatsApp Button */}
         <Link
           to={`https://wa.me/${adminPhone}?text=`}
@@ -468,7 +468,7 @@ const VendorReg = () => {
           className="group flex items-center bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md transition-all duration-300 overflow-hidden w-10 h-10 hover:w-auto hover:px-3 justify-center hover:justify-start"
           title="WhatsApp Admin"
         >
-          <FaWhatsapp className="w-4 h-4 flex-shrink-0" />
+          <FaWhatsapp className="w-5 h-5 flex-shrink-0" />
           <span className="opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm ml-2 whitespace-nowrap">
             +{adminPhone}
           </span>
