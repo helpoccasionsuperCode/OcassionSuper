@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const Vendor = require("../models/vendorRegister");
 
@@ -110,15 +111,15 @@ const updateVendorProfile = async (req, res) => {
         const userUpdateData = {};
         const vendorUpdateData = {};
 
-        // Define allowed fields for user updates
-        const allowedUserFields = ['phone_number'];
+        // Define allowed fields for user updates (only these 3 fields)
+        const allowedUserFields = ['email', 'password', 'phone_number'];
         allowedUserFields.forEach(field => {
             if (updateData[field] !== undefined) {
                 userUpdateData[field] = updateData[field];
             }
         });
 
-        // Define allowed fields for vendor updates
+        // Define allowed fields for vendor updates (only these specific fields)
         const allowedVendorFields = [
             'businessName', 'ownerName', 'email', 'phone', 'city', 'serviceArea',
             'socialMedia', 'categories', 'othersCategories', 'images', 'videos',
@@ -131,7 +132,19 @@ const updateVendorProfile = async (req, res) => {
             }
         });
 
-        // Validate email format if being updated
+        // Validate user email format if being updated
+        if (userUpdateData.email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(userUpdateData.email)) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: "Please enter a valid email address" 
+                });
+            }
+            userUpdateData.email = userUpdateData.email.toLowerCase().trim();
+        }
+
+        // Validate vendor email format if being updated
         if (vendorUpdateData.email) {
             const emailRegex = /@gmail\.com$/;
             if (!emailRegex.test(vendorUpdateData.email)) {
@@ -143,7 +156,22 @@ const updateVendorProfile = async (req, res) => {
             vendorUpdateData.email = vendorUpdateData.email.toLowerCase().trim();
         }
 
-        // Validate phone format if being updated
+        // Validate user password if being updated
+        if (userUpdateData.password) {
+            if (userUpdateData.password.length < 6) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: "Password must be at least 6 characters long" 
+                });
+            }
+        }
+
+        // Validate user phone number format if being updated
+        if (userUpdateData.phone_number) {
+            userUpdateData.phone_number = userUpdateData.phone_number.trim();
+        }
+
+        // Validate vendor phone format if being updated
         if (vendorUpdateData.phone) {
             const phoneRegex = /^[0-9]{10}$/;
             if (!phoneRegex.test(vendorUpdateData.phone)) {
@@ -169,6 +197,12 @@ const updateVendorProfile = async (req, res) => {
                 success: false, 
                 message: "Packages must be an array" 
             });
+        }
+
+        // Hash password if being updated
+        if (userUpdateData.password) {
+            const salt = await bcrypt.genSalt(10);
+            userUpdateData.password = await bcrypt.hash(userUpdateData.password, salt);
         }
 
         // Update user data if there are user fields to update
@@ -207,7 +241,7 @@ const updateVendorProfile = async (req, res) => {
             );
         }
 
-        // Prepare response data
+        // Prepare response data (exclude password for security)
         const responseData = {
             user: {
                 id: updatedUser._id,
