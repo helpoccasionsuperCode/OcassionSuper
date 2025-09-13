@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const {vendorRegisterRoute} = require("./routes/vendorRegisterRoute");
 const adminRoutes = require("./routes/adminRoutes");
 const authRoutes = require("./routes/authRoutes");
+const vendorProfileRoutes = require("./routes/vendorProfileRoutes");
 require("dotenv").config();
 
 const app = express();
@@ -63,6 +64,7 @@ app.get("/", (req,res) => {
 
 app.use("/api/register/vendor", vendorRegisterRoute); 
 app.use("/api", authRoutes);
+app.use("/api", vendorProfileRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.get("/api/cities", async (req, res) => {

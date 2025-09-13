@@ -36,6 +36,38 @@ npm run dev
 npm start
 ```
 
+## 🔐 Authentication & Vendor Profile APIs
+
+### Quick Start Guide
+
+The backend now includes secure authentication and vendor profile management. Here's how to use them:
+
+#### 1. **Login to Get Access Token**
+First, login to get a JWT token for authenticated requests.
+
+#### 2. **Access Your Vendor Profile**
+Use the token to view and update your vendor profile data.
+
+### Environment Variables Required
+
+Add these to your `.env` file:
+```env
+JWT_SECRET=your_super_secret_jwt_key_here
+JWT_EXPIRES_IN=1d
+```
+
+### Postman Quick Setup
+
+1. **Create Environment Variables:**
+   - `baseUrl`: `http://localhost:3000` (or your server port)
+   - `token`: (leave empty, will be set after login)
+
+2. **Test Flow:**
+   - First call Login API → copy token to environment
+   - Then use token in Authorization header for profile APIs
+
+---
+
 ## 🧪 Postman Testing
 
 ### Import Postman Collection
@@ -54,6 +86,11 @@ Download and import the Postman collection for easy API testing:
     {
       "key": "baseUrl",
       "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
       "type": "string"
     }
   ],
@@ -94,7 +131,227 @@ Download and import the Postman collection for easy API testing:
 
 ### Test Cases
 
-#### 1. **Successful Vendor Registration**
+## 🔑 Authentication APIs
+
+### 1. **User Login**
+
+**Purpose**: Get JWT token for authenticated requests
+
+**Request:**
+```http
+POST {{baseUrl}}/api/login
+Content-Type: application/json
+
+{
+  "email": "vendor@gmail.com",
+  "password": "password123"
+}
+```
+
+**Expected Response:**
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": "64a1b2c3d4e5f6789abc123",
+      "email": "vendor@gmail.com",
+      "role": "vendor",
+      "vendor_id": "64a1b2c3d4e5f6789abc456"
+    }
+  }
+}
+```
+
+**Postman Setup:**
+1. Save the `token` from response to your environment variable
+2. Use `{{token}}` in Authorization header for protected endpoints
+
+---
+
+## 👤 Vendor Profile APIs
+
+### 2. **Get Vendor Profile**
+
+**Purpose**: Fetch current vendor profile data from both User and VendorRegister tables
+
+**Request:**
+```http
+GET {{baseUrl}}/api/vendor/64a1b2c3d4e5f6789abc123/profile
+Authorization: Bearer {{token}}
+```
+
+**Expected Response:**
+```json
+{
+  "success": true,
+  "message": "Profile data fetched successfully",
+  "data": {
+    "user": {
+      "id": "64a1b2c3d4e5f6789abc123",
+      "email": "vendor@gmail.com",
+      "role": "vendor",
+      "phone_number": "9876543210",
+      "is_active": true,
+      "last_login": "2024-01-15T10:30:00.000Z",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-15T10:30:00.000Z"
+    },
+    "vendor": {
+      "id": "64a1b2c3d4e5f6789abc456",
+      "businessName": "John's Catering",
+      "ownerName": "John Doe",
+      "email": "vendor@gmail.com",
+      "phone": "1234567890",
+      "city": "New York",
+      "serviceArea": "Manhattan",
+      "categories": ["catering", "events"],
+      "packages": [
+        {
+          "name": "Basic Package",
+          "price": 5000,
+          "description": "Basic catering service"
+        }
+      ],
+      "documents": {
+        "gst": ["gst_certificate.pdf"],
+        "businessProof": ["business_license.pdf"],
+        "idProof": ["aadhar_card.pdf"]
+      },
+      "bankDetails": {
+        "accountHolder": "John Doe",
+        "accountNumber": "1234567890",
+        "ifsc": "ABCD0001234"
+      },
+      "status": "approved"
+    }
+  }
+}
+```
+
+### 3. **Update Vendor Profile**
+
+**Purpose**: Update profile data in both User and VendorRegister tables
+
+**Request:**
+```http
+PUT {{baseUrl}}/api/vendor/64a1b2c3d4e5f6789abc123/profile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "phone_number": "9876543210",
+  "businessName": "Updated Business Name",
+  "city": "Los Angeles",
+  "serviceArea": "Downtown LA",
+  "categories": ["photography", "catering"],
+  "packages": [
+    {
+      "name": "Premium Package",
+      "price": 10000,
+      "description": "Premium service with photography"
+    }
+  ]
+}
+```
+
+**Expected Response:**
+```json
+{
+  "success": true,
+  "message": "Profile updated successfully",
+  "data": {
+    "user": {
+      "id": "64a1b2c3d4e5f6789abc123",
+      "email": "vendor@gmail.com",
+      "role": "vendor",
+      "phone_number": "9876543210",
+      "is_active": true,
+      "vendor_id": "64a1b2c3d4e5f6789abc456",
+      "updatedAt": "2024-01-15T11:00:00.000Z"
+    },
+    "vendor": {
+      "id": "64a1b2c3d4e5f6789abc456",
+      "businessName": "Updated Business Name",
+      "city": "Los Angeles",
+      "serviceArea": "Downtown LA",
+      "categories": ["photography", "catering"],
+      "packages": [
+        {
+          "name": "Premium Package",
+          "price": 10000,
+          "description": "Premium service with photography"
+        }
+      ],
+      "updatedAt": "2024-01-15T11:00:00.000Z"
+    }
+  }
+}
+```
+
+---
+
+## 🚨 Error Responses
+
+### Authentication Errors
+
+**Missing Token:**
+```json
+{
+  "success": false,
+  "message": "Access token required"
+}
+```
+
+**Invalid Token:**
+```json
+{
+  "success": false,
+  "message": "Invalid token"
+}
+```
+
+**Expired Token:**
+```json
+{
+  "success": false,
+  "message": "Token expired"
+}
+```
+
+### Authorization Errors
+
+**Access Denied (Wrong User):**
+```json
+{
+  "success": false,
+  "message": "Access denied. You can only access your own profile"
+}
+```
+
+**Wrong Role:**
+```json
+{
+  "success": false,
+  "message": "Access denied. Vendor role required"
+}
+```
+
+**Inactive Account:**
+```json
+{
+  "success": false,
+  "message": "Account is inactive"
+}
+```
+
+---
+
+## 📝 Original Vendor Registration (Still Available)
+
+### 4. **Vendor Registration**
 
 **Request:**
 ```http
