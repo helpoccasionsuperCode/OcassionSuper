@@ -133,12 +133,12 @@ function VendorDetails() {
     setViewer(null);
   };
 
-  const checkUserExists = async (email) => {
+  const checkUserExists = async (email) => { 
     if (!email) return;
 
     try {
       setCheckingUser(true);
-      const base = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+      const base = import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com";
       const res = await fetch(`${base}/api/admin/users/vendors?search=${encodeURIComponent(email)}`, {
         credentials: "include",
       });
@@ -165,7 +165,7 @@ function VendorDetails() {
         setLoading(true);
         setError("");
         const base =
-          import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+          import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com";
         const res = await fetch(`${base}/api/admin/vendors/${id}`, {
           credentials: "include",
           signal: controller.signal,
@@ -199,7 +199,7 @@ function VendorDetails() {
     try {
       setSaving(true);
       const base =
-        import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+        import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com";
       const res = await fetch(`${base}/api/admin/vendors/${id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
