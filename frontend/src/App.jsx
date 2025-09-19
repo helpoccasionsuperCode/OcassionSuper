@@ -15,7 +15,7 @@ import VendorDetails from "./components/VendorDetails";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ThankYou from "./components/ThankYou";
-import VendorProfile from "./components/VendorProfile";
+import VendorProfile from "./components/VendorProfile";  
 
 
 function App() {
