@@ -8,6 +8,7 @@ const {vendorRegisterRoute} = require("./routes/vendorRegisterRoute");
 const adminRoutes = require("./routes/adminRoutes");
 const authRoutes = require("./routes/authRoutes");
 const vendorProfileRoutes = require("./routes/vendorProfileRoutes");
+const mailRoutes = require("./routes/mailRoutes");
 require("dotenv").config();
 
 const app = express();
@@ -66,7 +67,7 @@ app.use("/api/register/vendor", vendorRegisterRoute);
 app.use("/api", authRoutes);
 app.use("/api", vendorProfileRoutes);
 app.use("/api/admin", adminRoutes);
-
+app.use("/api/vendorEmail", mailRoutes);
 app.get("/api/cities", async (req, res) => {
   const query = req.query.q;
   try {
@@ -96,6 +97,8 @@ app.post("/api/vendors", (req, res) => {
   console.log(req.body);
   res.json({ message: "Vendor registered successfully ✅" });
 });
+
+
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
