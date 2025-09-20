@@ -12,7 +12,7 @@ function VendorIntro() {
     useEffect(() => {
         if (!userId) return;
         axios
-            .get(`http://localhost:5000/api/vendor/${userId}/profile`, {
+            .get(`https://ocassionsuper.onrender.com/api/vendor/${userId}/profile`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     Accept: "application/json",

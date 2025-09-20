@@ -27,7 +27,7 @@ export default function VendorProfile() {
       try {
         setLoading(true);
         const res = await axios.get(
-          `http://localhost:5000/api/vendor/${userId}/profile`,
+          `https://ocassionsuper.onrender.com/api/vendor/${userId}/profile`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -126,7 +126,7 @@ export default function VendorProfile() {
 
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/vendor/${userId}/profile`,
+        `https://ocassionsuper.onrender.com/api/vendor/${userId}/profile`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -178,7 +178,7 @@ export default function VendorProfile() {
 
       // 1. Upload photo to server/cloud
       const uploadRes = await axios.post(
-        `http://localhost:5000/api/vendor/${userId}/upload-photo`,
+        `https://ocassionsuper.onrender.com/api/vendor/${userId}/upload-photo`,
         formDataFile,
         {
           headers: {
@@ -192,7 +192,7 @@ export default function VendorProfile() {
 
       // 2. Fetch updated profile from backend
       const profileRes = await axios.get(
-        `http://localhost:5000/api/vendor/${userId}/profile`,
+        `https://ocassionsuper.onrender.com/api/vendor/${userId}/profile`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
