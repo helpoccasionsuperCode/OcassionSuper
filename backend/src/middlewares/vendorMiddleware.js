@@ -184,7 +184,7 @@ const vendorRegistrationMiddleware = (req, res, next) => {
         phone: value.phone.replace(/\s+/g, ""),
         city: value.city.trim(),
         serviceArea: value.serviceArea.trim(),
-        socialMedia: value.socialMedia.trim(),
+        socialMedia: typeof value.socialMedia === 'string' ? value.socialMedia.trim() : null,
         categories: value.categories.map(cat => cat.trim()),
         othersCategories: Array.isArray(value.othersCategories) ? value.othersCategories.map(cat => cat.trim()) : [],
         images: Array.isArray(value.images) ? value.images : [],

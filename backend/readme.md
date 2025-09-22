@@ -85,7 +85,7 @@ Download and import the Postman collection for easy API testing:
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:5000",
+      "value": "http://localhost:3000",
       "type": "string"
     },
     {
@@ -110,9 +110,9 @@ Download and import the Postman collection for easy API testing:
           "raw": "{\n  \"businessName\": \"John's Catering\",\n  \"ownerName\": \"John Doe\",\n  \"email\": \"john@catering.com\",\n  \"phone\": \"1234567890\",\n  \"city\": \"New York\",\n  \"serviceArea\": \"Manhattan\",\n  \"categories\": [\"catering\", \"events\"],\n  \"packages\": [\"basic\", \"premium\"],\n  \"documents\": {\n    \"gst\": \"GST123456789\",\n    \"businessProof\": \"business_license.pdf\",\n    \"idProof\": \"aadhar_card.pdf\"\n  },\n  \"bankDetails\": {\n    \"accountHolder\": \"John Doe\",\n    \"accountNumber\": \"1234567890\",\n    \"ifsc\": \"ABCD0001234\"\n  }\n}"
         },
         "url": {
-          "raw": "{{baseUrl}}/register/vendor/register",
+          "raw": "{{baseUrl}}/api/register/vendor/register",
           "host": ["{{baseUrl}}"],
-          "path": ["register", "vendor", "register"]
+          "path": ["api", "register", "vendor", "register"]
         }
       }
     }
@@ -355,29 +355,26 @@ Content-Type: application/json
 
 **Request:**
 ```http
-POST {{baseUrl}}/register/vendor/register
-Content-Type: application/json
+POST {{baseUrl}}/api/register/vendor/register
+Content-Type: multipart/form-data
 
-{
-  "businessName": "John's Catering",
-  "ownerName": "John Doe",
-  "email": "john@catering.com",
-  "phone": "1234567890",
-  "city": "New York",
-  "serviceArea": "Manhattan",
-  "categories": ["catering", "events"],
-  "packages": ["basic", "premium"],
-  "documents": {
-    "gst": "GST123456789",
-    "businessProof": "business_license.pdf",
-    "idProof": "aadhar_card.pdf"
-  },
-  "bankDetails": {
-    "accountHolder": "John Doe",
-    "accountNumber": "1234567890",
-    "ifsc": "ABCD0001234"
-  }
-}
+Form-Data fields:
+- businessName: John's Catering
+- ownerName: John Doe
+- email: john@catering.com
+- phone: 1234567890
+- city: New York
+- serviceArea: Manhattan
+- categories: ["catering","events"] (as JSON string)
+- packages: ["basic","premium"] (as JSON string)
+- documents: {"gst":"GST123456789"} (as JSON string)
+- bankDetails: {"accountHolder":"John Doe","accountNumber":"1234567890","ifsc":"ABCD0001234"} (as JSON string)
+# Optional file fields:
+- images: <file>
+- videos: <file>
+- gst: <file>
+- businessProof: <file>
+- idProof: <file>
 ```
 
 **Expected Response:**
@@ -398,13 +395,12 @@ Content-Type: application/json
 
 **Request:**
 ```http
-POST {{baseUrl}}/register/vendor/register
-Content-Type: application/json
+POST {{baseUrl}}/api/register/vendor/register
+Content-Type: multipart/form-data
 
-{
-  "businessName": "Test Business",
-  "email": "invalid-email"
-}
+Form-Data fields (invalid example shown for validation):
+- businessName: Test Business
+- email: invalid-email
 ```
 
 **Expected Response:**
@@ -427,18 +423,17 @@ Content-Type: application/json
 
 **Request:**
 ```http
-POST {{baseUrl}}/register/vendor/register
-Content-Type: application/json
+POST {{baseUrl}}/api/register/vendor/register
+Content-Type: multipart/form-data
 
-{
-  "businessName": "Another Business",
-  "ownerName": "Jane Smith",
-  "email": "john@catering.com",
-  "phone": "9876543210",
-  "city": "Los Angeles",
-  "serviceArea": "Downtown",
-  "categories": ["photography"]
-}
+Form-Data fields:
+- businessName: Another Business
+- ownerName: Jane Smith
+- email: john@catering.com
+- phone: 9876543210
+- city: Los Angeles
+- serviceArea: Downtown
+- categories: ["photography"] (as JSON string)
 ```
 
 **Expected Response:**
@@ -453,18 +448,17 @@ Content-Type: application/json
 
 **Request:**
 ```http
-POST {{baseUrl}}/register/vendor/register
-Content-Type: application/json
+POST {{baseUrl}}/api/register/vendor/register
+Content-Type: multipart/form-data
 
-{
-  "businessName": "Simple Business",
-  "ownerName": "Simple Owner",
-  "email": "simple@business.com",
-  "phone": "5555555555",
-  "city": "Simple City",
-  "serviceArea": "Simple Area",
-  "categories": ["catering"]
-}
+Form-Data fields:
+- businessName: Simple Business
+- ownerName: Simple Owner
+- email: simple@business.com
+- phone: 5555555555
+- city: Simple City
+- serviceArea: Simple Area
+- categories: ["catering"] (as JSON string)
 ```
 
 **Expected Response:**
@@ -608,7 +602,7 @@ Set these in your Postman collection:
 
 ### Vendor Registration
 
-**POST** `/register/vendor/register`
+**POST** `/api/register/vendor/register`
 
 Register a new vendor with business details.
 
