@@ -158,12 +158,20 @@ const VendorStep1 = ({
               const value = e.target.value;
               setFormData({ ...formData, email: value });
             }}
+            // onBlur={(e) => {
+            //   const value = e.target.value;
+            //   if (value && !value.endsWith("@gmail.com")) {
+            //     toast.error("Email must contain @gmail.com");
+            //   }
+            // }}
             onBlur={(e) => {
               const value = e.target.value;
-              if (value && !value.endsWith("@gmail.com")) {
-                toast.error("Email must contain @gmail.com");
+              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // General email validation
+              if (value && !emailRegex.test(value)) {
+                toast.error("Please enter a valid email address");
               }
             }}
+
             placeholder="you@gmail.com"
             className="outline-1 hover:outline-2 hover:outline-[#E69B83] rounded-lg px-4 py-2 w-full"
             required
@@ -328,8 +336,8 @@ const VendorStep1 = ({
                   }
                 }}
                 className={`flex flex-col items-center justify-center border rounded-xl py-6 w-full hover:shadow-md transition ${selected
-                    ? "border-orange-400 bg-orange-50"
-                    : "border-gray-200"
+                  ? "border-orange-400 bg-orange-50"
+                  : "border-gray-200"
                   }`}
               >
                 <Icon size={32} className="text-orange-400 mb-2" />
