@@ -195,7 +195,7 @@ function Admin() {
       )}
 
       {/* Admin – Vendor Users */}
-      <VendorUsersList />
+      {/* <VendorUsersList /> */}
     </div>
   );
 }
