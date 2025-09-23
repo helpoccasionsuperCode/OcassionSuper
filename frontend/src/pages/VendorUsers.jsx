@@ -144,11 +144,11 @@ function VendorUsers() {
       console.log("Response data:", data);
       console.log("Vendor email from response:", data.data?.email);
       toast.success("Vendor user created successfully!");
-      
+
       // Send email to vendor after successful user creation
       try {
         toast.info("Sending email to vendor...", { autoClose: 1500 });
-        
+
         const emailResponse = await fetch(
           `${import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"}/api/vendorEmail/send-mail`,
           {
@@ -165,9 +165,9 @@ function VendorUsers() {
             }),
           }
         );
-        
+
         const emailData = await emailResponse.json();
-        
+
         if (emailResponse.ok && emailData.success) {
           toast.success("Email sent successfully to vendor");
         } else {
@@ -177,7 +177,7 @@ function VendorUsers() {
         console.error("Email sending error:", emailErr);
         toast.error("Failed to send email to vendor");
       }
-      
+
       navigate("/admin");
     } catch (err) {
       console.error("Submit error:", err);
@@ -231,7 +231,7 @@ function VendorUsers() {
           onClick={() => navigate("/admin")}
           className="px-4 py-2 rounded-md border border-gray-500 bg-gray-500 text-white mb-4"
         >
-          ← Back to Admin
+          ← Back
         </button>
         <h1 className="text-2xl font-bold mb-2">Register New Vendor</h1>
         <p className="text-gray-600">
@@ -283,21 +283,26 @@ function VendorUsers() {
 
         {/* Email */}
         <div className="mb-5">
-          <label className="block mb-2 font-medium">Email Address *</label>
+          <label className="block mb-2 font-medium">Email Address
+            <span className="text-red-500"> *</span>
+          </label>
           <input
             type="email"
             name="email"
+            readOnly
             value={formData.email}
             onChange={handleInputChange}
             required
-            className="w-full p-3 border border-gray-300 rounded-md text-sm"
+            className="w-full cursor-not-allowed p-3 border border-gray-300 rounded-md text-sm"
             placeholder="Enter email address"
           />
         </div>
 
         {/* Password */}
         <div className="mb-5">
-          <label className="block mb-2 font-medium">Password *</label>
+          <label className="block mb-2 font-medium">Password
+            <span className="text-red-500"> *</span>
+          </label>
           <div className="flex gap-2">
             <input
               type="text"
@@ -322,107 +327,6 @@ function VendorUsers() {
           </p>
         </div>
 
-        {/* Phone Number */}
-        <div className="mb-5">
-          <label className="block mb-2 font-medium">Phone Number</label>
-          <input
-            type="tel"
-            name="phone_number"
-            value={formData.phone_number}
-            onChange={handleInputChange}
-            className="w-full p-3 border border-gray-300 rounded-md text-sm"
-            placeholder="Enter phone number (optional)"
-          />
-        </div>
-
-        {/* Business Information */}
-        <div className="mb-5">
-          <h4 className="text-lg font-semibold mb-4 text-gray-800">Business Information</h4>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block mb-2 font-medium">Business Name *</label>
-              <input
-                type="text"
-                name="businessName"
-                value={formData.businessName}
-                onChange={handleInputChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-md text-sm"
-                placeholder="Enter business name"
-              />
-            </div>
-
-            <div>
-              <label className="block mb-2 font-medium">Owner Name *</label>
-              <input
-                type="text"
-                name="ownerName"
-                value={formData.ownerName}
-                onChange={handleInputChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-md text-sm"
-                placeholder="Enter owner name"
-              />
-            </div>
-
-            <div>
-              <label className="block mb-2 font-medium">City *</label>
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleInputChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-md text-sm"
-                placeholder="Enter city"
-              />
-            </div>
-
-            <div>
-              <label className="block mb-2 font-medium">Service Area *</label>
-              <input
-                type="text"
-                name="serviceArea"
-                value={formData.serviceArea}
-                onChange={handleInputChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-md text-sm"
-                placeholder="Enter service area"
-              />
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <label className="block mb-2 font-medium">Categories</label>
-            <input
-              type="text"
-              name="categories"
-              value={formData.categories}
-              onChange={handleInputChange}
-              className="w-full p-3 border border-gray-300 rounded-md text-sm"
-              placeholder="Enter categories separated by commas (e.g., Photography, Catering)"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Enter main service categories separated by commas
-            </p>
-          </div>
-
-          <div className="mt-4">
-            <label className="block mb-2 font-medium">Other Categories</label>
-            <input
-              type="text"
-              name="othersCategories"
-              value={formData.othersCategories}
-              onChange={handleInputChange}
-              className="w-full p-3 border border-gray-300 rounded-md text-sm"
-              placeholder="Enter additional categories separated by commas"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Enter additional service categories separated by commas
-            </p>
-          </div>
-        </div>
 
         {/* Buttons */}
         <div className="flex gap-3 justify-end">
@@ -441,7 +345,7 @@ function VendorUsers() {
               : "bg-emerald-500 border-emerald-500 hover:bg-emerald-600"
               }`}
           >
-            {creating ? "Creating..." : "Register Vendor"}
+            {creating ? "Creating..." : "Create User"}
           </button>
         </div>
       </form>

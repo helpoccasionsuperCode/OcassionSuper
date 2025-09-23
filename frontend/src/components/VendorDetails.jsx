@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 
 function VendorDetails() {
   const { id } = useParams();
+  // console.log(id);
+  
   const navigate = useNavigate();
   const [vendor, setVendor] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,6 +14,11 @@ function VendorDetails() {
   const [userExists, setUserExists] = useState(false);
   const [checkingUser, setCheckingUser] = useState(false);
 
+  console.log("Environment check:", {
+    backendUrl: import.meta.env.VITE_BACKEND_URL,
+    nodeEnv: import.meta.env.NODE_ENV,
+    mode: import.meta.env.MODE
+  });
 
   const detectTypeFromExt = (url = "") => {
     const lower = String(url).toLowerCase();
@@ -160,22 +167,33 @@ function VendorDetails() {
 
   useEffect(() => {
     const controller = new AbortController();
-    const fetchVendor = async () => {
+    const fetchVendor = async () => { 
       try {
         setLoading(true);
         setError("");
         const base =
           import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com";
+        
+        console.log("Fetching vendor from:", `${base}/api/admin/vendors/${id}`);
+        
         const res = await fetch(`${base}/api/admin/vendors/${id}`, {
           credentials: "include",
           signal: controller.signal,
+          headers: {
+            'Content-Type': 'application/json',
+          }
         });
+
+        console.log("Response status:", res.status);
+        console.log("Response headers:", Object.fromEntries(res.headers.entries()));
 
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));
+          console.error("API Error:", body);
           throw new Error(body.message || `Failed with ${res.status}`);
         }
         const responseData = await res.json();
+        console.log("Vendor data received:", responseData);
         setVendor(responseData.data);
 
         // Check if user already exists for this vendor's email
@@ -220,7 +238,22 @@ function VendorDetails() {
   };
 
   if (loading) return <div style={{ padding: 16 }}>Loading vendor details…</div>;
-  if (error) return <div style={{ padding: 16, color: "red" }}>Error: {error}</div>;
+  if (error) {
+    return (
+      <div style={{ padding: 16 }}>
+        <div style={{ color: "red", marginBottom: 16 }}>Error: {error}</div>
+        <div style={{ fontSize: 14, color: "#666" }}>
+          <p>Debugging information:</p>
+          <ul>
+            <li>Backend URL: {import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"}</li>
+            <li>Vendor ID: {id}</li>
+            <li>Environment: {import.meta.env.MODE}</li>
+          </ul>
+          <p>Please check the browser console for more details.</p>
+        </div>
+      </div>
+    );
+  }
   if (!vendor) return <div style={{ padding: 16 }}>No vendor found.</div>;
 
   return (
