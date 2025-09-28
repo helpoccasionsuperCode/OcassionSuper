@@ -15,9 +15,14 @@ const validateVendorRegistration = (data) => {
   const schema = Joi.object({
     businessName: Joi.string().min(2).max(100).required(),
     ownerName: Joi.string().min(2).max(50).required(),
-    email: Joi.string().email().pattern(/@gmail\.com$/).required().messages({
-      'string.pattern.base': 'Email must contain @gmail.com'
+    // email: Joi.string().email().pattern(/@gmail\.com$/).required().messages({
+    //   'string.pattern.base': 'Email must contain @gmail.com'
+    // }),
+
+    email: Joi.string().email().required().messages({
+      'string.email': 'Please enter a valid email address'
     }),
+
     phone: Joi.string().pattern(/^\d{10}$/).required().messages({
       'string.pattern.base': 'Invalid mobile number. Please enter exactly 10 digits.'
     }),

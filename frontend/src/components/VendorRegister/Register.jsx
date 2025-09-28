@@ -97,10 +97,18 @@ const Register = () => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.email || !formData.email.endsWith("@gmail.com")) {
-      toast.error("Email must contain @gmail.com");
+    // if (!formData.email || !formData.email.endsWith("@gmail.com")) {
+    //   toast.error("Email must contain @gmail.com");
+    //   return;
+    // }
+    if (
+      !formData.email ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+    ) {
+      toast.error("Please enter a valid email address");
       return;
     }
+
 
     if (!formData.phone || !/^(\d){10}$/.test(String(formData.phone))) {
       toast.error("Invalid mobile number. Please enter exactly 10 digits.");
@@ -284,10 +292,19 @@ const Register = () => {
         {step < 4 ? (
           <button
             onClick={() => {
-              if (!formData.email || !formData.email.endsWith("@gmail.com")) {
-                toast.error("Email must contain @gmail.com");
+              // if (!formData.email || !formData.email.endsWith("@gmail.com")) {
+              //   toast.error("Email must contain @gmail.com");
+              //   return;
+              // }
+
+              if (
+                !formData.email ||
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+              ) {
+                toast.error("Please enter a valid email address");
                 return;
               }
+
               if (!formData.phone || !/^(\d){10}$/.test(String(formData.phone))) {
                 toast.error("Invalid mobile number. Please enter exactly 10 digits.");
                 return;

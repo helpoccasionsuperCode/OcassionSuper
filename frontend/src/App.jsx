@@ -16,6 +16,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ThankYou from "./components/ThankYou";
 import VendorProfile from "./components/VendorProfile";  
+import CustomerDashBoard from "./pages/customer/CustomerDashBoard";
+
+
 
 
 function App() {
@@ -41,7 +44,7 @@ function App() {
         <Route path="/thank-you" element={<ThankYou />} />
         <Route path="/vendor-profile" element={<VendorProfile userId={authUser?.id} />} />
         <Route path="/vendor/:userId/profile" element={<VendorProfile />} />
-
+        <Route path="/customer" element={<CustomerDashBoard />} />
 
       </Routes>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover theme="colored" />
