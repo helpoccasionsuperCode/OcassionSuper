@@ -355,10 +355,11 @@
 
 // export default VendorUsers;
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { generateStrongPassword } from "../utils/passwordGenerator";
 import { toast } from "react-toastify";
+import VendorUserForm from "../components/VendorUserForm";
 
 function VendorUsers() {
   const { vendorId } = useParams();
@@ -379,24 +380,51 @@ function VendorUsers() {
     othersCategories: "",
   });
 
+  const [userExists, setUserExists] = useState(false);
+  const modeLabel = useMemo(() => (userExists ? "Update User" : "Create User"), [userExists]);
+
   useEffect(() => {
+    // If route param looks like an email, prefill it immediately so the form shows it
+    const looksLikeEmail = /@/.test(vendorId || "");
+    if (looksLikeEmail) {
+      setFormData(prev => ({ ...prev, email: decodeURIComponent(vendorId) }));
+    }
+
     const fetchVendor = async () => {
       try {
         setLoading(true);
         setError("");
-        const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"}/api/admin/vendors`,
-          { credentials: "include" }
-        );
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(body.message || `Request failed with ${res.status}`);
+        const base = import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com";
+
+        // If vendorId looks like an email, resolve vendor by email first
+        let resolvedVendor = null;
+        const looksLikeEmail = /@/.test(vendorId);
+        if (looksLikeEmail) {
+          const listRes = await fetch(`${base}/api/admin/vendors`, { credentials: "include" });
+          if (listRes.ok) {
+            const list = await listRes.json();
+            resolvedVendor = (list.data || []).find(v => (v.email || "").toLowerCase() === decodeURIComponent(vendorId).toLowerCase());
+          }
         }
-        const data = await res.json();
-        const vendorData = data.data.find((v) => v._id === vendorId);
-        if (!vendorData) {
-          throw new Error("Vendor not found");
+
+        if (!resolvedVendor) {
+          // Try direct fetch by id
+          const byIdRes = await fetch(`${base}/api/admin/vendors/${encodeURIComponent(vendorId)}`, { credentials: "include" });
+          if (byIdRes.ok) {
+            const byIdData = await byIdRes.json();
+            resolvedVendor = byIdData.data;
+          } else {
+            // Fallback: list and match by _id
+            const listRes = await fetch(`${base}/api/admin/vendors`, { credentials: "include" });
+            if (listRes.ok) {
+              const list = await listRes.json();
+              resolvedVendor = (list.data || []).find(v => v._id === vendorId);
+            }
+          }
         }
+
+        if (!resolvedVendor) throw new Error("Vendor not found");
+        const vendorData = resolvedVendor;
         setVendor(vendorData);
 
         setFormData((prev) => ({
@@ -410,6 +438,15 @@ function VendorUsers() {
           categories: (vendorData.categories || []).join(", "),
           othersCategories: (vendorData.othersCategories || []).join(", "),
         }));
+
+        // Check if user already exists for this vendor
+        try {
+          const resUsers = await fetch(`${base}/api/admin/users/vendors?vendor_id=${vendorData._id}`, { credentials: "include" });
+          if (resUsers.ok) {
+            const usersData = await resUsers.json();
+            setUserExists(Array.isArray(usersData.data) && usersData.data.length > 0);
+          }
+        } catch (_) { /* ignore */ }
       } catch (err) {
         setError(err.message || "Failed to load vendor");
       } finally {
@@ -469,24 +506,28 @@ function VendorUsers() {
         othersCategories: othersCategoriesArray,
       };
 
-      const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"}/api/admin/users/create-vendor`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(requestData),
-        }
-      );
+      const base = import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com";
+      const endpoint = userExists
+        ? `${base}/api/admin/users/vendor/${vendorId}`
+        : `${base}/api/admin/users/create-vendor`;
+      const method = userExists ? "PUT" : "POST";
+      const body = userExists ? JSON.stringify({ ...requestData, vendor_id: vendorId }) : JSON.stringify(requestData);
+
+      const res = await fetch(endpoint, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body,
+      });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || `Request failed with ${res.status}`);
 
-      toast.success("Vendor user created successfully!");
+      toast.success(userExists ? "Vendor user updated successfully!" : "Vendor user created successfully!");
 
+      // Always send email after create or update (with new password if provided)
       try {
         toast.info("Sending email to vendor...", { autoClose: 1500 });
-
         const emailResponse = await fetch(
           `${import.meta.env.VITE_BACKEND_URL || "https://ocassionsuper.onrender.com"}/api/vendorEmail/send-mail`,
           {
@@ -494,14 +535,13 @@ function VendorUsers() {
             headers: { "Content-Type": "application/json" },
             credentials: "include",
             body: JSON.stringify({
-              email: data.data?.email,
-              password: formData.password,
+              email: data.data?.email || formData.email,
+              password: formData.password || undefined,
               businessName: formData.businessName,
               ownerName: formData.ownerName
             }),
           }
         );
-
         const emailData = await emailResponse.json();
         if (emailResponse.ok && emailData.success) {
           toast.success("Email sent successfully to vendor");
@@ -550,15 +590,15 @@ function VendorUsers() {
         >
           ← Back
         </button>
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Create Vendor User</h1>
-        <p className="text-gray-600 text-sm sm:text-base">
+        <h1 className="text-2xl sm:text-3xl text-center font-bold mb-2">Create Vendor User</h1>
+        <p className="text-gray-600 text-sm sm:text-base text-center">
           Create a complete vendor account with all business details
         </p>
       </div>
 
       {/* Vendor Information */}
       <div className="border border-gray-200 rounded-lg p-4 sm:p-6 bg-gray-50 mb-6 overflow-x-auto">
-        <h3 className="text-lg sm:text-xl font-semibold mb-3">Vendor Information</h3>
+        <h3 className="text-lg sm:text-xl font-semibold text-center mb-3">Vendor Information</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm sm:text-base">
           <div><strong>Business Name:</strong> {vendor.businessName}</div>
           <div><strong>Owner:</strong> {vendor.ownerName}</div>
@@ -577,10 +617,10 @@ function VendorUsers() {
       </div>
 
       {/* Create User Form */}
-      <form onSubmit={handleSubmit} className="border border-gray-200 rounded-lg p-4 sm:p-6 md:p-8 bg-white">
+      {/* <form onSubmit={handleSubmit} className="border border-gray-200 rounded-lg p-4 sm:p-6 md:p-8 bg-white">
         <h3 className="text-lg sm:text-xl font-semibold mb-5">Vendor Registration Details</h3>
 
-        {/* Email */}
+        
         <div className="mb-5">
           <label className="block mb-2 font-medium">Email Address<span className="text-red-500"> *</span></label>
           <input
@@ -595,7 +635,7 @@ function VendorUsers() {
           />
         </div>
 
-        {/* Password */}
+        
         <div className="mb-5">
           <label className="block mb-2 font-medium">Password<span className="text-red-500"> *</span></label>
           <div className="flex flex-col sm:flex-row gap-2">
@@ -622,7 +662,7 @@ function VendorUsers() {
           </p>
         </div>
 
-        {/* Buttons */}
+        
         <div className="flex flex-col sm:flex-row gap-3 justify-end mt-4">
           <button
             type="button"
@@ -639,10 +679,22 @@ function VendorUsers() {
               : "bg-emerald-500 border-emerald-500 hover:bg-emerald-600"
               }`}
           >
-            {creating ? "Creating..." : "Create User"}
+            {creating ? (userExists ? "Updating..." : "Creating...") : modeLabel}
           </button>
         </div>
-      </form>
+      </form> */}
+
+      <VendorUserForm
+        formData={formData}
+        creating={creating}
+        userExists={userExists}
+        modeLabel={modeLabel}
+        handleInputChange={handleInputChange}
+        handleGeneratePassword={handleGeneratePassword}
+        handleSubmit={handleSubmit}
+        onCancel={() => navigate("/admin")}
+      />
+
     </div>
   );
 }

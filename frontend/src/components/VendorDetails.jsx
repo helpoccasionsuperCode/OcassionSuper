@@ -805,12 +805,12 @@ function VendorDetails() {
                     >
                       Reject
                     </button>
-                    {!userExists && !checkingUser && (
+                    {!checkingUser && (
                       <button
                         onClick={() => navigate(`/admin/vendor-users/${vendor._id || id}`)}
                         className="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 transition"
                       >
-                        Create User
+                        {userExists ? "Update User" : "Create User"}
                       </button>
                     )}
                     {userExists && (

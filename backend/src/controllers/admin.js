@@ -169,6 +169,103 @@ const setUserActiveState = async (req, res) => {
     }
 };
 
+// Update existing vendor user (by vendor_id) and sync vendor details
+const updateVendorAndUser = async (req, res) => {
+    try {
+        const { vendor_id } = req.params;
+        if (!mongoose.isValidObjectId(vendor_id)) {
+            return res.status(400).json({ success: false, message: "Invalid vendor_id" });
+        }
+
+        const {
+            // email is intentionally ignored for updates to avoid unique conflicts
+            password,
+            phone_number,
+            businessName,
+            ownerName,
+            city,
+            serviceArea,
+            categories,
+            othersCategories,
+        } = req.body || {};
+
+        const vendor = await Vendor.findById(vendor_id);
+        if (!vendor) {
+            return res.status(404).json({ success: false, message: "Vendor not found" });
+        }
+
+        // Find the existing vendor user
+        const user = await User.findOne({ vendor_id });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "Vendor user not found for this vendor_id" });
+        }
+
+        // Update user fields if provided
+        if (typeof phone_number !== "undefined") {
+            user.phone_number = typeof phone_number === "string" ? phone_number.trim() : phone_number;
+        }
+        if (typeof businessName !== "undefined") {
+            user.businessName = typeof businessName === "string" ? businessName.trim() : businessName;
+        }
+        if (typeof ownerName !== "undefined") {
+            user.ownerName = typeof ownerName === "string" ? ownerName.trim() : ownerName;
+        }
+        if (typeof city !== "undefined") {
+            user.city = typeof city === "string" ? city.trim() : city;
+        }
+        if (typeof serviceArea !== "undefined") {
+            user.serviceArea = typeof serviceArea === "string" ? serviceArea.trim() : serviceArea;
+        }
+        if (typeof categories !== "undefined") {
+            if (Array.isArray(categories)) {
+                user.categories = categories.filter(c => c && String(c).trim());
+            } else if (typeof categories === "string" && categories.trim()) {
+                user.categories = categories.split(',').map(c => c.trim()).filter(Boolean);
+            }
+        }
+        if (typeof othersCategories !== "undefined") {
+            if (Array.isArray(othersCategories)) {
+                user.othersCategories = othersCategories.filter(c => c && String(c).trim());
+            } else if (typeof othersCategories === "string" && othersCategories.trim()) {
+                user.othersCategories = othersCategories.split(',').map(c => c.trim()).filter(Boolean);
+            }
+        }
+        if (typeof password === "string" && password.trim()) {
+            user.password = password.trim(); // pre-save hook will hash
+        }
+
+        await user.save();
+
+        // Sync vendor document with provided details as well
+        const vendorUpdate = {};
+        if (typeof businessName !== "undefined") vendorUpdate.businessName = businessName;
+        if (typeof ownerName !== "undefined") vendorUpdate.ownerName = ownerName;
+        if (typeof city !== "undefined") vendorUpdate.city = city;
+        if (typeof serviceArea !== "undefined") vendorUpdate.serviceArea = serviceArea;
+        if (typeof categories !== "undefined") {
+            vendorUpdate.categories = Array.isArray(categories)
+                ? categories.filter(c => c && String(c).trim())
+                : (typeof categories === "string" && categories.trim() ? categories.split(',').map(c => c.trim()).filter(Boolean) : vendor.categories);
+        }
+        if (typeof othersCategories !== "undefined") {
+            vendorUpdate.othersCategories = Array.isArray(othersCategories)
+                ? othersCategories.filter(c => c && String(c).trim())
+                : (typeof othersCategories === "string" && othersCategories.trim() ? othersCategories.split(',').map(c => c.trim()).filter(Boolean) : vendor.othersCategories);
+        }
+
+        if (Object.keys(vendorUpdate).length > 0) {
+            await Vendor.findByIdAndUpdate(vendor_id, vendorUpdate, { new: true });
+        }
+
+        const safeUser = user.toObject();
+        delete safeUser.password;
+        return res.status(200).json({ success: true, message: "Vendor user updated successfully", data: { user: safeUser } });
+    } catch (error) {
+        console.error("updateVendorAndUser error:", error);
+        return res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
+    }
+};
+
 module.exports = {
     createVendorUser,
     approveVendor,
@@ -292,5 +389,6 @@ module.exports = {
             console.error("listVendorUsers error:", error);
             return res.status(500).json({ success: false, message: "Internal Server Error" });
         }
-    }
+    },
+    updateVendorAndUser
 };

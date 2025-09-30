@@ -129,7 +129,20 @@ const Login = () => {
       </form>
 
       <p className="mt-3 sm:mt-4 text-center text-gray-600 text-sm sm:text-base hover:text-global-gradient">
-        <Link to="">Forgot password?</Link>
+        <button
+          type="button"
+          onClick={() => {
+            const emailValue = (email || "").trim().toLowerCase();
+            if (!emailValue) {
+              toast.error("Enter your email first");
+              return;
+            }
+            navigate(`/vendor-auth/forgot-password/${emailValue}`);
+          }}
+          className="underline text-blue-600 hover:text-blue-700"
+        >
+          Forgot password?
+        </button>
       </p>
     </div>
   );
