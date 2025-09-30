@@ -71,49 +71,28 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-// ✅ Always using Gmail, so we just read directly from .env
-const resolvedHost = process.env.SMTP_HOST || 'smtp.gmail.com';
-const resolvedPort = Number(process.env.SMTP_PORT || 587);
-const resolvedUser = process.env.SMTP_USER;
-const resolvedPass = process.env.SMTP_PASS;
-
-// ✅ Gmail always uses STARTTLS on port 587, so secure = false
-const resolvedSecure = resolvedPort === 465; // only true if using SSL (rare for Gmail)
-
-// Log the config (but never log password)
-console.log('📧 Email configuration:', {
-    host: resolvedHost,
-    port: resolvedPort,
-    user: resolvedUser,
-    secure: resolvedSecure,
-    hasPassword: !!resolvedPass
-});
-
-// ✅ Create transporter (Gmail setup)
-let transporter;
-try {
-    transporter = nodemailer.createTransport({
-        host: resolvedHost,
-        port: resolvedPort,
-        secure: resolvedSecure,
-        auth: {
-            user: resolvedUser,
-            pass: resolvedPass,
-        },
-        requireTLS: true, // Gmail requires TLS
-    });
-
-    // Verify connection once during startup
-    transporter.verify((error) => {
-        if (error) {
-            console.error('❌ SMTP connection failed:', error.message);
-        } else {
-            console.log('✅ SMTP connection successful');
-        }
-    });
-
-} catch (cfgErr) {
-    console.error('❌ Failed to configure SMTP transporter:', cfgErr.message);
+if (!process.env.SMTP_HOST || !process.env.SMTP_PORT || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+  throw new Error("Missing SMTP environment variables");
 }
 
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT),
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+  requireTLS: true,
+});
+
+transporter.verify((error) => {
+  if (error) {
+    console.error('SMTP connection failed:', error.message);
+  } else {
+    console.log('SMTP connection successful');
+  }
+});
+
 module.exports = transporter;
+
