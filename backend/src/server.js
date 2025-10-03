@@ -59,6 +59,7 @@ connectDB()
   });
 
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 // URL-encoded parser if needed by some routes
 app.use(express.urlencoded({ extended: true }));
@@ -138,9 +139,9 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 //mail
 app.use("/api/vendorEmail", mailRoutes);
 
-app.listen(PORT, () => {
+app.listen(PORT, HOST, () => {
   console.log("Ocassionsuper backend is running 🚀");
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is listening on http://${HOST}:${PORT}`);
 });
 
 module.exports = app;
