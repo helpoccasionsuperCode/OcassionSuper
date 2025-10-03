@@ -58,7 +58,7 @@ connectDB()
     console.log("Server will start without database connection");
   });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000; 
 const HOST = process.env.HOST || '0.0.0.0';
 
 // URL-encoded parser if needed by some routes
@@ -139,9 +139,9 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 //mail
 app.use("/api/vendorEmail", mailRoutes);
 
-app.listen(PORT, HOST, () => {
+app.listen(PORT, () => {
   console.log("Ocassionsuper backend is running 🚀");
-  console.log(`Server is listening on http://${HOST}:${PORT}`);
+  // console.log(`Server is listening on http://${HOST}:${PORT}`);
 });
 
 module.exports = app;
