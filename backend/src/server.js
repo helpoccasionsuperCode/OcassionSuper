@@ -59,13 +59,13 @@ app.get("/", (req, res) => {
 
 // --- API Routes ---
 // All API routes are now consolidated under the /api prefix for consistency.
-app.use("/api/register/vendor", vendorRegisterRoute);
-app.use("/api/auth", authRoutes); // More specific path
-app.use("/api/profile", vendorProfileRoutes); // More specific path
-app.use("/api/admin", adminRoutes);
-app.use("/api/public", publicRoutes);
+app.use("api/register/vendor", vendorRegisterRoute);
+app.use("api/auth", authRoutes); // More specific path
+app.use("api/profile", vendorProfileRoutes); // More specific path
+app.use("api/admin", adminRoutes);
+app.use("api/public", publicRoutes);
 // app.use("/api/requests", vendorRequestRoutes); // Added missing route
-app.use("/api/vendorEmail", mailRoutes);
+app.use("api/vendorEmail", mailRoutes);
 
 // --- Utility & Upload Routes ---
 
