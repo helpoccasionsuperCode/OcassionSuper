@@ -13,8 +13,39 @@ require("dotenv").config();
 
 const app = express();
 const upload = multer();
+
+// CORS configuration must be applied early
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://occasionsuper.in',
+  'https://ocassion-super.vercel.app',
+  process.env.CLIENT_URL
+].filter(Boolean);
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow non-browser requests (no origin) and known origins
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+// Explicitly handle preflight
+app.options('*', cors(corsOptions));
+
+// JSON parser after CORS
 app.use(express.json());
-app.use(helmet());
+
+// Configure helmet without blocking cross-origin fetches for APIs
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}));
 
 const connectDB = require("./config/db");
 
@@ -29,25 +60,7 @@ connectDB()
 
 const PORT = process.env.PORT || 3000;
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://occasionsuper.in',
-  'https://ocassion-super.vercel.app',
-  process.env.CLIENT_URL
-].filter(Boolean);
-
-
-// ✅ Enable CORS
-const corsOptions = {
-  origin: allowedOrigins,
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-
-app.use(cors(corsOptions));
-
-app.use(express.json());
+// URL-encoded parser if needed by some routes
 app.use(express.urlencoded({ extended: true }));
 
 app.use((err, req, res, next) => {
