@@ -71,18 +71,25 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-if (!process.env.SMTP_HOST || !process.env.SMTP_PORT || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-  throw new Error("Missing SMTP environment variables");
-}
+const isProduction = (process.env.NODE_ENV || 'development') === 'production';
+
+// Resolve configuration from env with flexibility
+const resolved = {
+  service: process.env.SMTP_SERVICE || process.env.EMAIL_SERVICE || '',
+  host: process.env.SMTP_HOST || process.env.EMAIL_HOST || '',
+  port: Number(process.env.SMTP_PORT || process.env.EMAIL_PORT || 0),
+  user: process.env.SMTP_USER || process.env.EMAIL_USER || '',
+  pass: process.env.SMTP_PASS || process.env.EMAIL_PASS || '',
+  secureEnv: typeof process.env.SMTP_SECURE !== 'undefined' ? String(process.env.SMTP_SECURE) === 'true' : undefined,
+};
 
 // Infer secure based on port if not explicitly set
-const inferredSecure = String(process.env.SMTP_PORT) === '465';
+const inferredSecure = resolved.secureEnv !== undefined
+  ? resolved.secureEnv
+  : String(resolved.port) === '465';
 
-// Determine whether to reject self-signed certificates
-// - In production: default to true (reject), unless explicitly disabled via env
-// - In non-production: default to false (allow), unless explicitly enabled via env
+// TLS policy: reject in prod by default, allow in dev unless overridden
 const envReject = process.env.SMTP_TLS_REJECT_UNAUTHORIZED;
-const isProduction = (process.env.NODE_ENV || 'development') === 'production';
 let rejectUnauthorized = isProduction;
 if (typeof envReject !== 'undefined') {
   rejectUnauthorized = String(envReject) !== 'false';
@@ -90,28 +97,61 @@ if (typeof envReject !== 'undefined') {
   rejectUnauthorized = false;
 }
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: process.env.SMTP_SECURE ? String(process.env.SMTP_SECURE) === 'true' : inferredSecure,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  requireTLS: true,
-  tls: {
-    // Allow self-signed certificates depending on env and config
-    rejectUnauthorized,
-  },
-});
+let transporter;
 
-transporter.verify((error) => {
-  if (error) {
-    console.error('SMTP connection failed:', error.message);
+try {
+  if (resolved.service && !resolved.host) {
+    // Use a well-known service (e.g., gmail, sendgrid)
+    transporter = nodemailer.createTransport({
+      service: resolved.service,
+      auth: { user: resolved.user, pass: resolved.pass },
+      pool: true,
+      maxConnections: 3,
+      maxMessages: 50,
+      connectionTimeout: 15_000,
+      greetingTimeout: 10_000,
+      socketTimeout: 20_000,
+      tls: { rejectUnauthorized },
+      logger: !isProduction,
+    });
   } else {
-    console.log('SMTP connection successful');
+    // Direct host/port configuration
+    transporter = nodemailer.createTransport({
+      host: resolved.host,
+      port: resolved.port || 587,
+      secure: inferredSecure,
+      auth: { user: resolved.user, pass: resolved.pass },
+      requireTLS: !inferredSecure,
+      pool: true,
+      maxConnections: 3,
+      maxMessages: 50,
+      connectionTimeout: 15_000,
+      greetingTimeout: 10_000,
+      socketTimeout: 20_000,
+      tls: { rejectUnauthorized },
+      logger: !isProduction,
+    });
   }
-});
+} catch (cfgErr) {
+  console.error('Failed to configure SMTP transporter:', cfgErr);
+}
 
-module.exports = transporter;
+if (!transporter) {
+  // Create a stub that fails fast with a clear message instead of crashing the app
+  module.exports = {
+    sendMail: async () => {
+      throw new Error('Email not configured. Please set SMTP_SERVICE or SMTP_HOST/PORT/USER/PASS.');
+    },
+    verify: (cb) => cb && cb(new Error('Email not configured')),
+  };
+} else {
+  transporter.verify((error) => {
+    if (error) {
+      console.error('SMTP connection failed:', error && error.message ? error.message : error);
+    } else {
+      console.log('SMTP connection successful');
+    }
+  });
+  module.exports = transporter;
+}
 
