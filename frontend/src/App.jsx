@@ -18,6 +18,7 @@ import ThankYou from "./components/ThankYou";
 import VendorProfile from "./components/VendorProfile";
 import CustomerDashBoard from "./pages/customer/CustomerDashBoard";
 import VendorUserForm from "./components/VendorUserForm";
+import Forgotpassword from "./pages/ForgotPassword";
 
 
 
@@ -37,16 +38,16 @@ function App() {
         <Route path="/services" element={<Services />} />
         <Route path="/recommendations" element={<AIRecommendations />} />
         <Route path="/test-upload" element={<FileUploadTest />} />
-        <Route path="/admin" element={<Admin />} />
+        {/* <Route path="/admin" element={<Admin />} /> */}
         <Route path="/admin/vendors/:id" element={<VendorDetails />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/vendor-users" element={<VendorUsersList />} />
         <Route path="/admin/vendor-users/:vendorId" element={<VendorUsers />} />
         <Route path="/thank-you" element={<ThankYou />} />
         <Route path="/vendor-profile" element={<VendorProfile userId={authUser?.id} />} />
         <Route path="/vendor/:userId/profile" element={<VendorProfile />} />
         <Route path="/customer" element={<CustomerDashBoard />} />
-        <Route path="/vendor-auth/forgot-password/:email" element={<VendorUserForm />} />
+        <Route path="/vendor-auth/forgot-password" element={<Forgotpassword />} />
 
       </Routes>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover theme="colored" />

@@ -75,15 +75,34 @@ if (!process.env.SMTP_HOST || !process.env.SMTP_PORT || !process.env.SMTP_USER |
   throw new Error("Missing SMTP environment variables");
 }
 
+// Infer secure based on port if not explicitly set
+const inferredSecure = String(process.env.SMTP_PORT) === '465';
+
+// Determine whether to reject self-signed certificates
+// - In production: default to true (reject), unless explicitly disabled via env
+// - In non-production: default to false (allow), unless explicitly enabled via env
+const envReject = process.env.SMTP_TLS_REJECT_UNAUTHORIZED;
+const isProduction = (process.env.NODE_ENV || 'development') === 'production';
+let rejectUnauthorized = isProduction;
+if (typeof envReject !== 'undefined') {
+  rejectUnauthorized = String(envReject) !== 'false';
+} else if (!isProduction) {
+  rejectUnauthorized = false;
+}
+
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT),
-  secure: false,
+  secure: process.env.SMTP_SECURE ? String(process.env.SMTP_SECURE) === 'true' : inferredSecure,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
   requireTLS: true,
+  tls: {
+    // Allow self-signed certificates depending on env and config
+    rejectUnauthorized,
+  },
 });
 
 transporter.verify((error) => {
