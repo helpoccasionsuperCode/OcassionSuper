@@ -38,8 +38,8 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-2xl p-6 shadow-sm flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-sm">Total Revenue</p>
-              <h2 className="text-2xl font-bold">₹535,000</h2>
-              <p className="text-green-600 text-sm">+12.5% from last month</p>
+              <h2 className="text-2xl font-bold">₹0</h2>
+              <p className="text-green-600 text-sm"></p>
             </div>
             <div className="bg-orange-100 text-orange-500 rounded-xl p-3">
               <DollarSign />
@@ -50,8 +50,8 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-2xl p-6 shadow-sm flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-sm">Active Vendors</p>
-              <h2 className="text-2xl font-bold">15</h2>
-              <p className="text-blue-600 text-sm">2 pending approval</p>
+              <h2 className="text-2xl font-bold">0</h2>
+              <p className="text-blue-600 text-sm"></p>
             </div>
             <div className="bg-blue-100 text-blue-500 rounded-xl p-3">
               <Building2 />
@@ -62,8 +62,8 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-2xl p-6 shadow-sm flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-sm">Total Bookings</p>
-              <h2 className="text-2xl font-bold">6</h2>
-              <p className="text-green-600 text-sm">2 confirmed</p>
+              <h2 className="text-2xl font-bold">0</h2>
+              <p className="text-green-600 text-sm"></p>
             </div>
             <div className="bg-orange-100 text-orange-500 rounded-xl p-3">
               <Calendar />
@@ -74,8 +74,8 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-2xl p-6 shadow-sm flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-sm">Platform Users</p>
-              <h2 className="text-2xl font-bold">6</h2>
-              <p className="text-blue-600 text-sm">+8.2% growth</p>
+              <h2 className="text-2xl font-bold">0</h2>
+              <p className="text-blue-600 text-sm"></p>
             </div>
             <div className="bg-green-100 text-green-500 rounded-xl p-3">
               <Users />

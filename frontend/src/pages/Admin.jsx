@@ -132,8 +132,7 @@ function Admin() {
   );
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Admin – Vendors</h1>
+    <div className="mx-auto">
 
       {loading && <p>Loading vendors...</p>}
       {error && <div className="text-red-600 mb-4">Error: {error}</div>}
@@ -142,7 +141,7 @@ function Admin() {
         value={vendorSearch}
         onChange={(e) => setVendorSearch(e.target.value)}
         placeholder="Search by owner name or email"
-        className="w-full max-w-lg border border-gray-300 rounded-lg p-2 mb-6 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-full  border border-gray-300 rounded-lg p-2 mb-6 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
 
       {/* Pending */}

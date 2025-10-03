@@ -25,6 +25,7 @@ import {
     Users,
     Shield
 } from "lucide-react";
+import Admin from "../pages/Admin";
 
 const revenueTrend = [
     { month: "Jan", revenue: 450000 },
@@ -114,46 +115,47 @@ export default function AdminContent() {
 
             {/* Vendors */}
             {activeTab === "vendors" && (
-                <div className="bg-white p-4 rounded-2xl shadow">
-                    <h2 className="font-bold text-lg mb-4">Vendor Management</h2>
-                    <div className="space-y-4">
-                        {[
-                            {
-                                name: "Shaadi Planners India",
-                                contact: "Anjali Sharma • Delhi",
-                                status: "Approved",
-                            },
-                            {
-                                name: "Taste Buds Catering",
-                                contact: "Rahul Kapoor • Mumbai",
-                                status: "Approved",
-                            },
-                            {
-                                name: "Pixel Perfect Photography",
-                                contact: "Priya Singh • Bangalore",
-                                status: "Approved",
-                            },
-                        ].map((vendor, idx) => (
-                            <div
-                                key={idx}
-                                className="flex items-center justify-between bg-gray-50 p-3 rounded-xl"
-                            >
-                                <div>
-                                    <p className="font-semibold">{vendor.name}</p>
-                                    <p className="text-gray-500 text-sm">{vendor.contact}</p>
-                                </div>
-                                <div className="flex space-x-2">
-                                    <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full">
-                                        {vendor.status}
-                                    </span>
-                                    <button className="bg-orange-50 text-orange-500 px-3 py-1 rounded-full">
-                                        Review
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                <Admin/>
+                // <div className="bg-white p-4 rounded-2xl shadow">
+                //     <h2 className="font-bold text-lg mb-4">Vendor Management</h2>
+                //     <div className="space-y-4">
+                //         {[
+                //             {
+                //                 name: "Shaadi Planners India",
+                //                 contact: "Anjali Sharma • Delhi",
+                //                 status: "Approved",
+                //             },
+                //             {
+                //                 name: "Taste Buds Catering",
+                //                 contact: "Rahul Kapoor • Mumbai",
+                //                 status: "Approved",
+                //             },
+                //             {
+                //                 name: "Pixel Perfect Photography",
+                //                 contact: "Priya Singh • Bangalore",
+                //                 status: "Approved",
+                //             },
+                //         ].map((vendor, idx) => (
+                //             <div
+                //                 key={idx}
+                //                 className="flex items-center justify-between bg-gray-50 p-3 rounded-xl"
+                //             >
+                //                 <div>
+                //                     <p className="font-semibold">{vendor.name}</p>
+                //                     <p className="text-gray-500 text-sm">{vendor.contact}</p>
+                //                 </div>
+                //                 <div className="flex space-x-2">
+                //                     <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full">
+                //                         {vendor.status}
+                //                     </span>
+                //                     <button className="bg-orange-50 text-orange-500 px-3 py-1 rounded-full">
+                //                         Review
+                //                     </button>
+                //                 </div>
+                //             </div>
+                //         ))}
+                //     </div>
+                // </div>
             )}
 
             {/* Bookings */}
